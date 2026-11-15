@@ -1,0 +1,2 @@
+{"timestamp": "2027-01-13 22:00:00.00 +0000", "bug_type": "210"}
+{"panicString": "panic(cpu 2 caller 0xfffffff0): thermalmonitord: watchdog timeout: no checkins from thermalmonitord in 180 seconds\nDebugger message: panic"}

@@ -1,0 +1,805 @@
+{
+  "_comment": "Advice catalogue (plan §5.14, §5.14a). Steps are stored per OS version ('asOf'). No myths: no routine force-quitting, no 'clean RAM', no drain-to-calibrate. 'relief' says who does the work: vitals, shortcut, guided or manual. 'watch' is the reading used to report the result.",
+  "version": 1,
+  "asOf": "iOS 27.2",
+  "actions": {
+    "guided.restart": {
+      "title": "Restart the phone",
+      "why": "A restart ends stuck background work and clears memory. It is harmless.",
+      "steps": [
+        "Press and quickly release volume up, then volume down.",
+        "Press and hold the side button until the slider appears, then slide to power off.",
+        "Wait 30 seconds, then hold the side button until the Apple logo appears.",
+        "Unlock the phone and open Vitals to compare."
+      ],
+      "effect": "Stops processes that were stuck; heat should ease within minutes if that was the cause.",
+      "downside": "None, apart from a minute offline.",
+      "effort": "1 minute",
+      "relief": "guided",
+      "watch": "thermalNow",
+      "source": "Apple Support: Restart your iPhone"
+    },
+    "relief.restart": {
+      "title": "Restart in one tap",
+      "why": "Runs the Vitals Restart shortcut, which opens the system restart prompt.",
+      "steps": [
+        "Tap Restart, then confirm in the system prompt."
+      ],
+      "effect": "Same as a manual restart.",
+      "downside": "Needs the Vitals Relief shortcuts added once.",
+      "effort": "seconds",
+      "relief": "shortcut",
+      "watch": "thermalNow",
+      "source": "Apple Support: Restart your iPhone"
+    },
+    "guided.recheckTomorrow": {
+      "title": "Leave it on charge and Wi-Fi tonight, check again tomorrow",
+      "why": "Restore, indexing and photo analysis finish fastest overnight on power and Wi-Fi with the screen locked.",
+      "steps": [
+        "Plug in and leave the phone on Wi-Fi overnight, screen locked.",
+        "Tomorrow after 9:00, share the new daily analytics file (Vitals will remind you).",
+        "Vitals compares the two days."
+      ],
+      "effect": "Hours spent warm should fall as the work completes.",
+      "downside": "None.",
+      "effort": "overnight",
+      "relief": "guided",
+      "watch": "thermalPressureDay",
+      "source": "Apple Support: About background activity after restoring"
+    },
+    "guided.coolDown": {
+      "title": "Cool-down checklist",
+      "why": "Heat builds fastest from charging, a case, sun and heavy use together.",
+      "steps": [
+        "Unplug the charger for now.",
+        "Take the phone out of its case.",
+        "Move it out of direct sun or a hot car.",
+        "Close the app you were using (just this once, it is not a routine fix).",
+        "Turn on Low Power Mode: Settings > Battery > Low Power Mode."
+      ],
+      "effect": "Thermal state should drop within 10 minutes.",
+      "downside": "Low Power Mode reduces background activity and some visual effects until you turn it off.",
+      "effort": "1 minute",
+      "relief": "guided",
+      "watch": "thermalNow",
+      "source": "Apple Support: If your iPhone gets too hot or too cold"
+    },
+    "relief.coolDown": {
+      "title": "Cool down in one tap",
+      "why": "The Vitals Cool down shortcut turns on Low Power Mode, lowers brightness and turns off Always-On.",
+      "steps": [
+        "Tap Cool down. Undo turns Low Power Mode off and Always On back on; brightness is left for you or auto-brightness to set."
+      ],
+      "effect": "Less work and less screen heat.",
+      "downside": "Dimmer screen and fewer background updates until you undo it.",
+      "effort": "seconds",
+      "relief": "shortcut",
+      "watch": "thermalNow",
+      "source": "Apple Support: If your iPhone gets too hot or too cold"
+    },
+    "relief.saveBattery": {
+      "title": "Save battery in one tap",
+      "why": "The Vitals Save battery shortcut turns on Low Power Mode and sets the screen to 40%.",
+      "steps": [
+        "Tap Save battery. Undo turns Low Power Mode off; brightness is left for you or auto-brightness to set."
+      ],
+      "effect": "Slower drain for the rest of the day.",
+      "downside": "Some background activity (mail fetch, downloads, iCloud) waits until Low Power Mode is off.",
+      "effort": "seconds",
+      "relief": "shortcut",
+      "watch": "drain",
+      "source": "Apple Support: Use Low Power Mode"
+    },
+    "relief.protectBattery": {
+      "title": "Set a charge limit",
+      "why": "A charge limit means the battery spends less time full, which slows wear. A Vitals shortcut for this is not offered yet: the setting's value cannot be set reliably from a shortcut file.",
+      "steps": [
+        "Open Settings > Battery > Charging.",
+        "Choose 80% (or the limit you want)."
+      ],
+      "effect": "Slower long-term wear.",
+      "downside": "Less charge available on a long day.",
+      "effort": "1 minute",
+      "relief": "guided",
+      "watch": "none",
+      "source": "Apple Support: About Optimised Battery Charging"
+    },
+    "manual.lowPowerMode": {
+      "title": "Turn on Low Power Mode",
+      "why": "Cuts background work and visual effects.",
+      "steps": [
+        "Settings > Battery > Low Power Mode."
+      ],
+      "effect": "Slower drain; less heat.",
+      "downside": "Some background refresh and effects pause.",
+      "effort": "seconds",
+      "relief": "manual",
+      "watch": "drain",
+      "source": "Apple Support: Use Low Power Mode"
+    },
+    "manual.batteryHealthCheck": {
+      "title": "Read your battery's maximum capacity",
+      "why": "Apple does not let apps read it. Settings shows it, and a screenshot of it can be shared into Vitals.",
+      "steps": [
+        "Settings > Battery > Battery Health.",
+        "Note Maximum Capacity, or take a screenshot and share it with Vitals."
+      ],
+      "effect": "Vitals can then judge wear.",
+      "downside": "None.",
+      "effort": "30 seconds",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Apple Support: iPhone battery and performance"
+    },
+    "manual.chargeLimit": {
+      "title": "Use Optimised Charging or a charge limit",
+      "why": "Spending less time at 100% slows battery ageing.",
+      "steps": [
+        "Settings > Battery > Charging.",
+        "Choose Optimised Battery Charging or a limit such as 80%."
+      ],
+      "effect": "Slower long-term wear.",
+      "downside": "Less charge on a long day if you pick a limit.",
+      "effort": "seconds",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Apple Support: About Optimised Battery Charging"
+    },
+    "manual.heatWhileCharging": {
+      "title": "Avoid heavy use while charging",
+      "why": "Charging adds heat; games or navigation on top of it push the phone into throttling.",
+      "steps": [
+        "Charge somewhere cool, out of the case if it gets warm.",
+        "Use a cable rather than wireless charging when the phone is already warm."
+      ],
+      "effect": "Fewer hot spells while charging.",
+      "downside": "None.",
+      "effort": "habit",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Apple Support: Maximize battery life and lifespan"
+    },
+    "vitals.photoCleanup": {
+      "title": "Clean up photos and videos",
+      "why": "Duplicates, old screenshots, screen recordings and large videos are the quickest space to win back.",
+      "steps": [
+        "Open Relief > Photos clean-up. Allow Photos access when asked.",
+        "Review the selection; nothing is deleted until you confirm.",
+        "Deleted items go to Recently Deleted for 30 days."
+      ],
+      "effect": "Frees the space shown.",
+      "downside": "Deleted items are gone after 30 days.",
+      "effort": "2 minutes",
+      "relief": "vitals",
+      "watch": "freeSpace",
+      "source": "Apple Support: Delete photos on iPhone"
+    },
+    "guided.offloadApps": {
+      "title": "Offload apps you do not use",
+      "why": "Offloading removes an app but keeps its data, so it comes back as it was.",
+      "steps": [
+        "Settings > General > iPhone Storage.",
+        "Turn on Offload Unused Apps, or tap an app and choose Offload App."
+      ],
+      "effect": "Frees the app's size.",
+      "downside": "The app re-downloads when you next open it.",
+      "effort": "1 minute",
+      "relief": "guided",
+      "watch": "freeSpace",
+      "source": "Apple Support: How to check the storage on your iPhone"
+    },
+    "guided.messagesAttachments": {
+      "title": "Delete large message attachments",
+      "why": "Videos and photos in old conversations add up.",
+      "steps": [
+        "Settings > General > iPhone Storage > Messages.",
+        "Review Large Attachments and delete what you do not need."
+      ],
+      "effect": "Frees the size shown.",
+      "downside": "Deleted attachments are removed from all your devices using iCloud Messages.",
+      "effort": "2 minutes",
+      "relief": "guided",
+      "watch": "freeSpace",
+      "source": "Apple Support: How to check the storage on your iPhone"
+    },
+    "guided.safariData": {
+      "title": "Clear Safari website data",
+      "why": "Cached website data can grow large.",
+      "steps": [
+        "Settings > Apps > Safari > Clear History and Website Data."
+      ],
+      "effect": "Frees cached data.",
+      "downside": "You will be signed out of websites.",
+      "effort": "30 seconds",
+      "relief": "guided",
+      "watch": "freeSpace",
+      "source": "Apple Support: Clear history and cookies from Safari"
+    },
+    "vitals.clearOwnData": {
+      "title": "Clear Vitals' own imported logs",
+      "why": "Shared logs and sysdiagnose reports kept by Vitals take space.",
+      "steps": [
+        "Relief > Clear Vitals data, then confirm."
+      ],
+      "effect": "Frees what Vitals stored.",
+      "downside": "Imported evidence is gone from Vitals' timeline and reports.",
+      "effort": "seconds",
+      "relief": "vitals",
+      "watch": "freeSpace",
+      "source": "Vitals"
+    },
+    "guided.backgroundRefresh": {
+      "title": "Turn off Background App Refresh for the busy app",
+      "why": "An app refreshing in the background often keeps the phone busy.",
+      "steps": [
+        "Settings > General > Background App Refresh.",
+        "Turn it off for the app Vitals named."
+      ],
+      "effect": "Less background work from that app.",
+      "downside": "The app loads fresh content when you open it instead.",
+      "effort": "30 seconds",
+      "relief": "guided",
+      "watch": "drain",
+      "source": "Apple Support: Background App Refresh"
+    },
+    "guided.locationReview": {
+      "title": "Limit Location access for the busy app",
+      "why": "Constant location use costs battery.",
+      "steps": [
+        "Settings > Privacy & Security > Location Services.",
+        "Set the app to While Using or Never."
+      ],
+      "effect": "Less battery spent on location.",
+      "downside": "The app may lose location-based features in the background.",
+      "effort": "30 seconds",
+      "relief": "guided",
+      "watch": "drain",
+      "source": "Apple Support: Location Services"
+    },
+    "manual.update": {
+      "title": "Install the iOS update",
+      "why": "Updates fix bugs that cause heat, drain and crashes.",
+      "steps": [
+        "Settings > General > Software Update.",
+        "Install on Wi-Fi and charger."
+      ],
+      "effect": "Fixes known issues.",
+      "downside": "A day of reindexing afterwards is normal.",
+      "effort": "30 minutes",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Apple Support: Update your iPhone"
+    },
+    "manual.lowDataMode": {
+      "title": "Check Low Data Mode",
+      "why": "It holds back downloads, backups and sync.",
+      "steps": [
+        "Settings > Wi-Fi > (i) next to your network > Low Data Mode, or Settings > Mobile Service > Mobile Data Options."
+      ],
+      "effect": "Sync and backups resume when it is off.",
+      "downside": "More data use.",
+      "effort": "seconds",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Apple Support: Use Low Data Mode"
+    },
+    "manual.vpnCheck": {
+      "title": "Check the VPN",
+      "why": "A VPN adds a hop to every connection and some keep the radio busy.",
+      "steps": [
+        "Settings > VPN (or the VPN app). Turn it off to compare speed and battery."
+      ],
+      "effect": "Faster connections if the VPN was the bottleneck.",
+      "downside": "Loses whatever the VPN gives you.",
+      "effort": "seconds",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Vitals"
+    },
+    "manual.forgetNetwork": {
+      "title": "Forget a flaky Wi-Fi network",
+      "why": "Re-joining a network fixes stale settings.",
+      "steps": [
+        "Settings > Wi-Fi > (i) > Forget This Network, then join again."
+      ],
+      "effect": "Cleaner connection.",
+      "downside": "You re-enter the password.",
+      "effort": "1 minute",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Apple Support: If your iPhone won't connect to Wi-Fi"
+    },
+    "manual.icloudDriveStatus": {
+      "title": "Check iCloud Drive in the Files app",
+      "why": "A file stuck on 'Uploading' or 'Waiting' can make the sync loop.",
+      "steps": [
+        "Files > Browse > iCloud Drive.",
+        "Look at the status line at the bottom for items stuck syncing or an error.",
+        "Settings > [your name] > iCloud shows how much iCloud Drive holds: tell Vitals."
+      ],
+      "effect": "Finds the stuck item, if any.",
+      "downside": "None.",
+      "effort": "1 minute",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Apple Support: If iCloud Drive isn't syncing"
+    },
+    "manual.icloudDriveToggle": {
+      "title": "If it comes back: turn iCloud Drive off and on",
+      "why": "Usually clears a sync that keeps looping.",
+      "steps": [
+        "First check Files: anything not yet uploaded is removed from this phone when you turn it off.",
+        "Settings > [your name] > iCloud > iCloud Drive > off, wait a minute, then on."
+      ],
+      "effect": "The sync starts clean.",
+      "downside": "Files not yet uploaded are lost from this phone; the full drive re-downloads.",
+      "effort": "5 minutes, then hours of re-download",
+      "relief": "manual",
+      "watch": "syncWrites",
+      "source": "Apple Support: If iCloud Drive isn't syncing"
+    },
+    "manual.appStoreRetry": {
+      "title": "Retry failed app downloads",
+      "why": "After setup some apps fail to download and keep retrying.",
+      "steps": [
+        "Settings > General > iPhone Storage: look for apps marked waiting.",
+        "Tap any app stuck on Waiting on the Home Screen to retry, or re-download it from the App Store."
+      ],
+      "effect": "Stops retry loops.",
+      "downside": "None.",
+      "effort": "2 minutes",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Apple Support: If an app won't download"
+    },
+    "manual.shareAnalytics": {
+      "title": "Share today's daily analytics file",
+      "why": "It records which processes were busy, thermal pressure time and restarts.",
+      "steps": [
+        "Settings > Privacy & Security > Analytics & Improvements > Analytics Data.",
+        "Tap the newest file named Analytics-… (not one ending in 'session').",
+        "Tap Share, then Vitals."
+      ],
+      "effect": "Vitals can name the busy processes for that day.",
+      "downside": "None.",
+      "effort": "1 minute",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Vitals"
+    },
+    "manual.batteryScreenshot": {
+      "title": "Share a screenshot of Settings > Battery",
+      "why": "Per-app battery use exists only on that screen.",
+      "steps": [
+        "Settings > Battery.",
+        "Tap the hours you care about (for example overnight) so the per-app list shows them.",
+        "Take a screenshot and import it in Vitals: Logs > Battery screenshot."
+      ],
+      "effect": "Vitals reads the per-app list on this phone and you confirm it.",
+      "downside": "None.",
+      "effort": "1 minute",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Vitals"
+    },
+    "manual.noteRestartTime": {
+      "title": "If it restarts on its own again, note the time",
+      "why": "A panic or watchdog log will then be in Analytics Data.",
+      "steps": [
+        "Note the time.",
+        "Settings > Privacy & Security > Analytics & Improvements > Analytics Data: look for files starting panic-full or watchdog and share them."
+      ],
+      "effect": "Gives the evidence a repair shop or Apple needs.",
+      "downside": "None.",
+      "effort": "1 minute",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Apple Developer: Diagnosing issues using crash reports"
+    },
+    "manual.usbNotSeen": {
+      "title": "Phone not seen over USB",
+      "why": "After a restart iOS keeps USB data off until the phone is unlocked and the accessory allowed.",
+      "steps": [
+        "Unlock the phone.",
+        "Unplug and plug the cable back in; tap Allow if asked about the accessory.",
+        "Try another port or cable.",
+        "Meanwhile, the Mac can use Wi-Fi if it was paired before."
+      ],
+      "effect": "The Mac sees the phone again.",
+      "downside": "None.",
+      "effort": "1 minute",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Vitals"
+    },
+    "manual.contactApple": {
+      "title": "Contact Apple Support or a repair shop",
+      "why": "The steps here did not fix it, or it needs hardware service.",
+      "steps": [
+        "Export the Vitals report (Report tab) and keep it ready.",
+        "Apple Support: support.apple.com or the Apple Support app. Apple works from a sysdiagnose sent through Feedback Assistant or a support case; the report is a cover sheet."
+      ],
+      "effect": "A proper repair or a diagnosis Apple can make from its own logs.",
+      "downside": "Time.",
+      "effort": "varies",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Apple Support"
+    },
+    "manual.resetSettings": {
+      "title": "Reset all settings",
+      "why": "Clears settings that may be causing the problem without erasing data.",
+      "steps": [
+        "Settings > General > Transfer or Reset iPhone > Reset > Reset All Settings."
+      ],
+      "effect": "Settings return to defaults; data stays.",
+      "downside": "Wi-Fi passwords, wallpaper and preferences are reset.",
+      "effort": "10 minutes to set up again",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Apple Support: Reset iPhone settings"
+    },
+    "safety.stopUsing": {
+      "title": "Stop using the phone and seek service",
+      "why": "Swelling, a burning smell, critical heat while charging or liquid damage are safety issues.",
+      "steps": [
+        "Unplug it. Do not charge it.",
+        "Keep it away from flammable things.",
+        "Contact Apple Support or a repair shop."
+      ],
+      "effect": "Safety first.",
+      "downside": "None.",
+      "effort": "now",
+      "relief": "manual",
+      "watch": "none",
+      "source": "Apple Support: If your iPhone gets too hot"
+    },
+    "guided.appPrivacyReport": {
+      "title": "Check what your apps accessed",
+      "why": "iOS keeps its own record of which apps used the camera, microphone, location, contacts and photos, and which internet domains they contacted. Vitals cannot read it, but you can, in a minute.",
+      "steps": [
+        "Open Settings > Privacy & Security > App Privacy Report.",
+        "If it is off, tap Turn On App Privacy Report. It starts recording from now and keeps the last 7 days, so come back in a day or two.",
+        "Under Data & Sensor Access, look for an app that used the camera, microphone or location when you were not using that feature.",
+        "Under App Network Activity, look for an app contacting many domains you do not recognise.",
+        "For anything unexpected: Settings > Apps > that app, and turn the permission off, or delete the app.",
+        "Also check Settings > General > VPN & Device Management for profiles you did not install."
+      ],
+      "effect": "You see which apps used sensors and the network, and can cut off anything you did not expect.",
+      "downside": "The report only shows access and network contacts. It cannot show hidden computation, and an unfamiliar domain is often just an analytics or ad service, not an attack.",
+      "effort": "1 minute",
+      "relief": "guided",
+      "watch": "none",
+      "source": "Apple Support: Use App Privacy Report on iPhone"
+    }
+  },
+  "findings": {
+    "battery.low": {
+      "actions": [
+        "relief.saveBattery",
+        "manual.lowPowerMode"
+      ],
+      "escalation": [
+        "guided.restart"
+      ]
+    },
+    "battery.fastDrain": {
+      "actions": [
+        "manual.shareAnalytics",
+        "manual.batteryScreenshot",
+        "relief.saveBattery"
+      ],
+      "escalation": [
+        "guided.restart",
+        "manual.update",
+        "guided.appPrivacyReport",
+        "manual.contactApple"
+      ]
+    },
+    "battery.worn": {
+      "actions": [
+        "manual.batteryHealthCheck",
+        "manual.chargeLimit"
+      ],
+      "escalation": [
+        "manual.contactApple"
+      ]
+    },
+    "battery.aging": {
+      "actions": [
+        "manual.chargeLimit",
+        "relief.protectBattery"
+      ],
+      "escalation": [
+        "manual.contactApple"
+      ]
+    },
+    "battery.cycles": {
+      "actions": [
+        "manual.batteryHealthCheck",
+        "manual.chargeLimit"
+      ],
+      "escalation": [
+        "manual.contactApple"
+      ]
+    },
+    "heat.now": {
+      "actions": [
+        "relief.coolDown",
+        "guided.coolDown",
+        "guided.restart"
+      ],
+      "escalation": [
+        "manual.update",
+        "manual.contactApple"
+      ],
+      "safety": "safety.stopUsing"
+    },
+    "heat.spells": {
+      "actions": [
+        "manual.shareAnalytics",
+        "guided.restart",
+        "manual.heatWhileCharging"
+      ],
+      "escalation": [
+        "manual.update",
+        "manual.resetSettings",
+        "manual.contactApple"
+      ]
+    },
+    "heat.cpuReports": {
+      "actions": [
+        "guided.backgroundRefresh",
+        "guided.restart"
+      ],
+      "escalation": [
+        "manual.update",
+        "manual.contactApple"
+      ]
+    },
+    "heat.unexplained": {
+      "actions": [
+        "guided.restart",
+        "guided.backgroundRefresh",
+        "manual.batteryScreenshot"
+      ],
+      "escalation": [
+        "manual.update",
+        "guided.appPrivacyReport",
+        "manual.resetSettings",
+        "manual.contactApple"
+      ]
+    },
+    "heat.thermalShutdown": {
+      "actions": [
+        "guided.coolDown"
+      ],
+      "escalation": [
+        "manual.contactApple"
+      ],
+      "safety": "safety.stopUsing"
+    },
+    "storage.full": {
+      "actions": [
+        "vitals.photoCleanup",
+        "guided.offloadApps",
+        "guided.messagesAttachments"
+      ],
+      "escalation": [
+        "guided.safariData",
+        "vitals.clearOwnData"
+      ]
+    },
+    "storage.low": {
+      "actions": [
+        "vitals.photoCleanup",
+        "guided.offloadApps"
+      ],
+      "escalation": [
+        "guided.messagesAttachments",
+        "guided.safariData"
+      ]
+    },
+    "memory.warnings": {
+      "actions": [
+        "guided.restart"
+      ],
+      "escalation": [
+        "manual.update"
+      ]
+    },
+    "memory.cores": {
+      "actions": [
+        "guided.coolDown"
+      ],
+      "escalation": [
+        "guided.restart"
+      ]
+    },
+    "memory.jetsam": {
+      "actions": [
+        "guided.restart",
+        "guided.offloadApps"
+      ],
+      "escalation": [
+        "manual.update"
+      ]
+    },
+    "memory.benchmark": {
+      "actions": [
+        "guided.coolDown",
+        "manual.lowPowerMode"
+      ],
+      "escalation": [
+        "manual.batteryHealthCheck",
+        "manual.contactApple"
+      ]
+    },
+    "network.none": {
+      "actions": [
+        "manual.forgetNetwork"
+      ],
+      "escalation": [
+        "guided.restart",
+        "manual.resetSettings"
+      ]
+    },
+    "network.lowData": {
+      "actions": [
+        "manual.lowDataMode"
+      ],
+      "escalation": []
+    },
+    "network.vpn": {
+      "actions": [
+        "manual.vpnCheck"
+      ],
+      "escalation": [
+        "guided.appPrivacyReport"
+      ]
+    },
+    "network.proxy": {
+      "actions": [
+        "manual.vpnCheck"
+      ],
+      "escalation": [
+        "guided.appPrivacyReport",
+        "manual.resetSettings"
+      ]
+    },
+    "software.update": {
+      "actions": [
+        "manual.update"
+      ],
+      "escalation": []
+    },
+    "software.uptime": {
+      "actions": [
+        "guided.restart",
+        "relief.restart"
+      ],
+      "escalation": []
+    },
+    "software.crash": {
+      "actions": [
+        "manual.update",
+        "guided.offloadApps"
+      ],
+      "escalation": [
+        "manual.contactApple"
+      ]
+    },
+    "software.panic": {
+      "actions": [
+        "manual.noteRestartTime",
+        "manual.update"
+      ],
+      "escalation": [
+        "manual.resetSettings",
+        "manual.contactApple"
+      ]
+    },
+    "software.simulator": {
+      "actions": [],
+      "escalation": []
+    },
+    "context.newPhone": {
+      "actions": [
+        "guided.recheckTomorrow",
+        "guided.restart",
+        "manual.appStoreRetry"
+      ],
+      "escalation": [
+        "manual.icloudDriveStatus"
+      ]
+    },
+    "icloud.stuckSync": {
+      "actions": [
+        "manual.icloudDriveStatus",
+        "guided.restart",
+        "guided.recheckTomorrow"
+      ],
+      "escalation": [
+        "manual.icloudDriveToggle",
+        "manual.contactApple"
+      ]
+    },
+    "icloud.sync": {
+      "actions": [
+        "manual.icloudDriveStatus"
+      ],
+      "escalation": [
+        "guided.restart"
+      ]
+    },
+    "health.restore": {
+      "actions": [
+        "guided.recheckTomorrow"
+      ],
+      "escalation": [
+        "guided.restart",
+        "manual.contactApple"
+      ]
+    },
+    "context.reindex": {
+      "actions": [
+        "guided.recheckTomorrow"
+      ],
+      "escalation": [
+        "guided.restart"
+      ]
+    },
+    "context.photos": {
+      "actions": [
+        "guided.recheckTomorrow"
+      ],
+      "escalation": []
+    },
+    "context.installs": {
+      "actions": [
+        "manual.appStoreRetry",
+        "guided.recheckTomorrow"
+      ],
+      "escalation": [
+        "guided.restart"
+      ]
+    },
+    "restart.unexpected": {
+      "actions": [
+        "manual.noteRestartTime",
+        "manual.update"
+      ],
+      "escalation": [
+        "manual.resetSettings",
+        "manual.contactApple"
+      ]
+    },
+    "restart.thermal": {
+      "actions": [
+        "guided.coolDown"
+      ],
+      "escalation": [
+        "manual.contactApple"
+      ],
+      "safety": "safety.stopUsing"
+    },
+    "widget.cpu": {
+      "actions": [
+        "guided.backgroundRefresh"
+      ],
+      "escalation": []
+    },
+    "usb.notSeen": {
+      "actions": [
+        "manual.usbNotSeen"
+      ],
+      "escalation": []
+    }
+  },
+  "myths": {
+    "clearRam": "iOS manages memory itself and gives apps no way to clear other apps' memory. A restart is the honest equivalent, and Vitals offers it.",
+    "forceQuit": "Force-quitting apps routinely does not save battery; reopening them costs more. Only close an app that is misbehaving.",
+    "calibrate": "Draining to 0% does not calibrate a modern battery and adds wear.",
+    "sideChannel": "No app, Vitals included, can detect another app attacking the phone through hardware side channels (cache timing, Spectre-style tricks, power or sensor snooping). iOS keeps every app from seeing what other apps do, and such attacks look like ordinary work; defending against them is Apple's job, through iOS updates. What you can check is which apps used sensors and the network, with iOS's own App Privacy Report, and keep iOS up to date."
+  }
+}

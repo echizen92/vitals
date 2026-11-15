@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Vitals app icon, concept A "pulse through a phone". Full-bleed square; iOS applies its own mask. -->
+  <defs>
+    <linearGradient id="pulse" gradientUnits="userSpaceOnUse" x1="0" y1="372" x2="0" y2="620">
+      <stop offset="0" stop-color="#FFB347"/>
+      <stop offset="0.2" stop-color="#FF6B5E"/>
+      <stop offset="0.46" stop-color="#3FD6B8"/>
+      <stop offset="1" stop-color="#3FD6B8"/>
+    </linearGradient>
+    <!-- Cuts the phone outline where the pulse passes through it. -->
+    <mask id="gap" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+      <rect width="1024" height="1024" fill="#fff"/>
+      <path d="M120 516 H432 L492 372 L556 612 L604 516 H904" fill="none" stroke="#000" stroke-width="64" stroke-linecap="butt" stroke-linejoin="round"/>
+    </mask>
+  </defs>
+  <rect width="1024" height="1024" fill="#0B0F14"/>
+  <rect x="318" y="186" width="388" height="652" rx="78" fill="none" stroke="#F4F1EA" stroke-width="30" mask="url(#gap)"/>
+  <path d="M120 516 H432 L492 372 L556 612 L604 516 H904" fill="none" stroke="url(#pulse)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,5 @@
+{
+  "_comment": "Bundled so the 'is iOS current' check needs no network. Update with every Vitals release. Latest value taken from the Xcode 27.2 SDK on 2026-11-15.",
+  "asOf": "2026-11-15",
+  "latest": "27.2"
+}

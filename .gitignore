@@ -1,0 +1,15 @@
+.DS_Store
+build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+Packages/VitalsKit/.build/
+Packages/VitalsKit/.swiftpm/
+companion/engine/.venv/
+__pycache__/
+*.pyc
+Pieces/
+shortcuts/.unqforge/
+device-diagnostics/
+.build/
+*.xcarchive

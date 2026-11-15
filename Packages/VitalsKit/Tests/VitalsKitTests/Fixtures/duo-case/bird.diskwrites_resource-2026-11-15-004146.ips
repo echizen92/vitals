@@ -1,0 +1,13 @@
+{"bug_type": "145", "timestamp": "2026-11-15 00:41:46.00 +0800", "app_name": "bird", "name": "bird", "incident_id": "REDACTED", "os_version": "iPhone OS 27.2.1 (24B91034)"}
+Date/Time:        2026-11-14 22:40:28.941 +0800
+End time:         2026-11-15 00:41:42.641 +0800
+OS Version:       iPhone OS 27.2.1 (Build 24B91034)
+Command:          bird
+Path:             /System/Library/PrivateFrameworks/iCloudDriveCore.framework/bird
+Event:            disk writes
+Action taken:     none
+Writes:           17.18 GB of file backed memory dirtied over 7274 seconds (2361.92 KB per second average), exceeding limit of 198.84 KB per second over 86400 seconds
+Writes limit:     17.18 GB
+Limit duration:   86400s
+Writes caused:    17.18 GB
+Writes duration:  7274s

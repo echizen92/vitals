@@ -1,0 +1,5 @@
+{"timestamp": "2027-01-15 00:10:00.00 +0000", "bug_type": "211", "os_version": "iPhone OS 27.1 (25B80)"}
+{"message": {"Count": 3}, "name": "com.apple.something.unrelated", "sampling": 100}
+{"message": {"last_value_MaximumCapacityPercent": 87, "last_value_CycleCount": 412, "last_value_NominalChargeCapacity": 3950, "last_value_DesignCapacity": 4500, "last_value_Temperature": 31}, "name": "BatteryHealthDaily"}
+{"message": {"timestamp": "2027-01-15 07:47:00.00 +0000", "level": 3, "sensor": "soc"}, "name": "com.apple.thermal.pressure"}
+not json at all

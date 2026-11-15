@@ -1,0 +1,6 @@
+{"bug_type": "202", "app_name": "StocksWidget", "timestamp": "2026-11-14 21:54:49.00 +0800", "name": "StocksWidget", "incident_id": "REDACTED"}
+Date/Time:        2026-11-14 21:52:56.655 +0800
+End time:         2026-11-14 21:54:48.138 +0800
+Command:          StocksWidget
+Event:            cpu usage
+CPU:              90 seconds cpu time over 111 seconds (81% cpu average), exceeding limit of 50% cpu over 180 seconds

@@ -1,0 +1,4 @@
+{
+  "_comment": "Expected ranges per model identifier and stage: {\"iPhone19,4\": {\"cpuSingle\": [low, high], ...}}. Empty on purpose: only ranges measured on real phones go here. See Docs/M8-benchmarks-and-network.md.",
+  "models": {}
+}

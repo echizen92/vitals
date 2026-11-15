@@ -1,0 +1,922 @@
+{
+ "schemaVersion": 1,
+ "generatedAt": "2026-11-15T04:37:24.792Z",
+ "generator": "vitals-companion 0.1.0 (SIMULATED DATA)",
+ "device": {
+  "model": "iPhone19,4",
+  "modelIdentifier": "iPhone19,4",
+  "osVersion": "iOS 27.1",
+  "osBuild": "25B80"
+ },
+ "readings": [
+  {
+   "id": "battery.temperature",
+   "area": "battery",
+   "label": "Battery temperature",
+   "value": 34.18,
+   "provenance": "measured",
+   "source": "Mac companion (simulated): battery registry",
+   "takenAt": "2026-11-15T04:37:24.792Z",
+   "unverified": true,
+   "unit": "°C"
+  },
+  {
+   "id": "battery.cycleCount.companion",
+   "area": "battery",
+   "label": "Charge cycles",
+   "value": 431,
+   "provenance": "measured",
+   "source": "Mac companion (simulated): battery registry",
+   "takenAt": "2026-11-15T04:37:24.792Z",
+   "unverified": true
+  },
+  {
+   "id": "battery.maxCapacity.companion",
+   "area": "battery",
+   "label": "Maximum capacity (estimate: full charge ÷ design, capped at 100%)",
+   "value": 86.7,
+   "provenance": "inferred",
+   "source": "Mac companion (simulated): battery registry",
+   "takenAt": "2026-11-15T04:37:24.792Z",
+   "unverified": true,
+   "unit": "%"
+  },
+  {
+   "id": "battery.designCapacity",
+   "area": "battery",
+   "label": "Design capacity",
+   "value": 4500,
+   "provenance": "measured",
+   "source": "Mac companion (simulated): battery registry",
+   "takenAt": "2026-11-15T04:37:24.792Z",
+   "unverified": true,
+   "unit": "mAh"
+  },
+  {
+   "id": "battery.fullChargeCapacity",
+   "area": "battery",
+   "label": "Full-charge capacity",
+   "value": 3900,
+   "provenance": "measured",
+   "source": "Mac companion (simulated): battery registry",
+   "takenAt": "2026-11-15T04:37:24.792Z",
+   "unverified": true,
+   "unit": "mAh"
+  },
+  {
+   "id": "battery.current",
+   "area": "battery",
+   "label": "Battery current (negative = draining)",
+   "value": -620,
+   "provenance": "measured",
+   "source": "Mac companion (simulated): battery registry",
+   "takenAt": "2026-11-15T04:37:24.792Z",
+   "unverified": true,
+   "unit": "mA"
+  },
+  {
+   "id": "battery.adapterWatts",
+   "area": "battery",
+   "label": "Charger power",
+   "value": 0,
+   "provenance": "measured",
+   "source": "Mac companion (simulated): battery registry",
+   "takenAt": "2026-11-15T04:37:24.792Z",
+   "unverified": true,
+   "unit": "W"
+  }
+ ],
+ "samples": [
+  {
+   "takenAt": "2026-11-15T04:37:23.928Z",
+   "charge": "unplugged",
+   "source": "companion",
+   "batteryLevel": 0.79,
+   "temperatureC": 30.93
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.036Z",
+   "charge": "unplugged",
+   "source": "companion",
+   "batteryLevel": 0.79,
+   "temperatureC": 31.29
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.146Z",
+   "charge": "unplugged",
+   "source": "companion",
+   "batteryLevel": 0.79,
+   "temperatureC": 31.9
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.253Z",
+   "charge": "unplugged",
+   "source": "companion",
+   "batteryLevel": 0.79,
+   "temperatureC": 32.38
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.356Z",
+   "charge": "unplugged",
+   "source": "companion",
+   "batteryLevel": 0.79,
+   "temperatureC": 32.65
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.467Z",
+   "charge": "unplugged",
+   "source": "companion",
+   "batteryLevel": 0.78,
+   "temperatureC": 33.15
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.576Z",
+   "charge": "unplugged",
+   "source": "companion",
+   "batteryLevel": 0.78,
+   "temperatureC": 33.31
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.680Z",
+   "charge": "unplugged",
+   "source": "companion",
+   "batteryLevel": 0.78,
+   "temperatureC": 33.8
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.790Z",
+   "charge": "unplugged",
+   "source": "companion",
+   "batteryLevel": 0.78,
+   "temperatureC": 34.18
+  }
+ ],
+ "processSamples": [
+  {
+   "takenAt": "2026-11-15T04:37:23.929Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 60.1,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:23.929Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.5,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:23.929Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:23.954Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 62.3,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:23.954Z",
+   "process": "SpringBoard",
+   "cpuPercent": 7.0,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:23.954Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:23.977Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 64.4,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:23.977Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.2,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:23.977Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.001Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 66.5,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.001Z",
+   "process": "SpringBoard",
+   "cpuPercent": 6.6,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.001Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.026Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 68.7,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.026Z",
+   "process": "SpringBoard",
+   "cpuPercent": 6.1,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.026Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.051Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 70.9,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.052Z",
+   "process": "SpringBoard",
+   "cpuPercent": 6.5,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.052Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.070Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 72.4,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.070Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.1,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.070Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.093Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 74.3,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.093Z",
+   "process": "SpringBoard",
+   "cpuPercent": 6.3,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.093Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.118Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 76.2,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.118Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.2,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.118Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.137Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 77.6,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.137Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.3,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.137Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.160Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 79.2,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.160Z",
+   "process": "SpringBoard",
+   "cpuPercent": 7.5,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.160Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.185Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 80.9,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.185Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.4,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.185Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.204Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 82.1,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.204Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.7,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.204Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.226Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 83.4,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.226Z",
+   "process": "SpringBoard",
+   "cpuPercent": 6.9,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.226Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.251Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 84.7,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.251Z",
+   "process": "SpringBoard",
+   "cpuPercent": 7.8,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.251Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.276Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 85.9,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.277Z",
+   "process": "SpringBoard",
+   "cpuPercent": 6.2,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.277Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.294Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 86.7,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.295Z",
+   "process": "SpringBoard",
+   "cpuPercent": 7.9,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.295Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.320Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 87.7,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.320Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.1,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.320Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.345Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 88.5,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.345Z",
+   "process": "SpringBoard",
+   "cpuPercent": 7.6,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.345Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.366Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 89.0,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.367Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.4,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.367Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.387Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 89.4,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.387Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.4,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.387Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.412Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 89.8,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.413Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.9,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.413Z",
+   "process": "Instagram",
+   "cpuPercent": 2.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.437Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 90.0,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.437Z",
+   "process": "SpringBoard",
+   "cpuPercent": 7.4,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.437Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.461Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 90.0,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.461Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.5,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.461Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.480Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 89.9,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.480Z",
+   "process": "SpringBoard",
+   "cpuPercent": 6.9,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.480Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.504Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 89.6,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.504Z",
+   "process": "SpringBoard",
+   "cpuPercent": 6.1,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.504Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.529Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 89.2,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.530Z",
+   "process": "SpringBoard",
+   "cpuPercent": 6.6,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.530Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.555Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 88.6,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.555Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.2,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.555Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.580Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 87.8,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.580Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.6,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.580Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.604Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 86.9,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.604Z",
+   "process": "SpringBoard",
+   "cpuPercent": 7.0,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.604Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.629Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 85.9,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.629Z",
+   "process": "SpringBoard",
+   "cpuPercent": 6.3,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.629Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.654Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 84.7,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.654Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.9,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.654Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.680Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 83.3,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.680Z",
+   "process": "SpringBoard",
+   "cpuPercent": 6.8,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.680Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.704Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 81.8,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.705Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.9,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.705Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.730Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 80.1,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.730Z",
+   "process": "SpringBoard",
+   "cpuPercent": 7.4,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.730Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.754Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 78.5,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.754Z",
+   "process": "SpringBoard",
+   "cpuPercent": 7.1,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.754Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.779Z",
+   "process": "mediaanalysisd",
+   "cpuPercent": 76.6,
+   "pid": 211
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.779Z",
+   "process": "SpringBoard",
+   "cpuPercent": 5.7,
+   "pid": 34
+  },
+  {
+   "takenAt": "2026-11-15T04:37:24.779Z",
+   "process": "Instagram",
+   "cpuPercent": 25.0,
+   "pid": 1402
+  }
+ ],
+ "processRates": [
+  {
+   "process": "bird",
+   "bytesWrittenPerMinute": 230000005.2,
+   "from": "2026-11-15T04:37:23.963Z",
+   "to": "2026-11-15T04:38:15.680Z",
+   "cpuPercent": 4.1
+  },
+  {
+   "process": "cloudd",
+   "bytesWrittenPerMinute": 227000003.7,
+   "from": "2026-11-15T04:37:23.963Z",
+   "to": "2026-11-15T04:38:15.680Z",
+   "cpuPercent": 13.0
+  },
+  {
+   "process": "nsurlsessiond",
+   "bytesWrittenPerMinute": 7999999.8,
+   "from": "2026-11-15T04:37:23.963Z",
+   "to": "2026-11-15T04:38:15.680Z",
+   "cpuPercent": 1.2
+  },
+  {
+   "process": "healthd",
+   "bytesWrittenPerMinute": 5000000.6,
+   "from": "2026-11-15T04:37:23.963Z",
+   "to": "2026-11-15T04:38:15.680Z",
+   "cpuPercent": 0.8
+  }
+ ],
+ "processTotals": [
+  {
+   "process": "cloudd",
+   "bytesWritten": 115895794091,
+   "at": "2026-11-15T04:38:15.680Z"
+  },
+  {
+   "process": "bird",
+   "bytesWritten": 102598381679,
+   "at": "2026-11-15T04:38:15.680Z"
+  }
+ ],
+ "imports": [],
+ "findings": [],
+ "hotSpells": [],
+ "hardwareTests": [],
+ "redactions": [
+  "Device identifiers (UDID, serial number) removed by the companion."
+ ],
+ "events": [],
+ "capture": {
+  "startedAt": "2026-11-15T04:37:23.928Z",
+  "endedAt": "2026-11-15T04:37:24.792Z",
+  "backend": "simulated",
+  "notes": [],
+  "accessTier": 2,
+  "conditions": [
+   {
+    "transport": "usb",
+    "charging": false,
+    "external": false,
+    "adapterWatts": 0,
+    "isWireless": false,
+    "locked": null
+   },
+   {
+    "transport": "usb",
+    "charging": false,
+    "external": false,
+    "adapterWatts": 0,
+    "isWireless": false,
+    "locked": null
+   }
+  ],
+  "resets": [],
+  "wholePhoneCPU": {
+   "totalPercent": 57.5,
+   "measurementOverheadPercent": 38.4,
+   "withoutOverheadPercent": 19.1
+  },
+  "batteryKeysUsed": [
+   "Temperature",
+   "CurrentCapacity",
+   "MaxCapacity",
+   "IsCharging",
+   "ExternalConnected",
+   "CycleCount",
+   "Amperage",
+   "InstantAmperage",
+   "Voltage",
+   "BatteryData.DesignCapacity",
+   "BatteryData.FullChargeCapacity",
+   "BatteryData.NominalChargeCapacity",
+   "AdapterDetails.Watts",
+   "ChargerData.SlowChargingReason",
+   "ChargerData.TimeChargingThermallyLimited",
+   "AdapterDetails.IsWireless"
+  ],
+  "measurementOverhead": "sysmond, DTServiceHub and remotepairingdeviced are the measurement itself; they are left out of rates and totals."
+ }
+}

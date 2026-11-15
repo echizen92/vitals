@@ -1,0 +1,2 @@
+[13:40:00.0000-GMT]{3>6} CHECKPOINT NOTICE: start
+[13:46:57.1000-GMT]{3>6} CHECKPOINT NOTICE: update engine finished with SUCCESS

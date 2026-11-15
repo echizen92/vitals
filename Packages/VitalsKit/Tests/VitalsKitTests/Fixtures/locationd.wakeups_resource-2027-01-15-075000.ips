@@ -1,0 +1,5 @@
+{"timestamp": "2027-01-15 07:50:00.00 +0000", "bug_type": "142", "name": "locationd"}
+Date/Time:        2027-01-15 07:50:00.000 +0000
+Command:          locationd
+Event:            wakeups
+Wakeups:          45001 wakeups over the last 270 seconds (167 wakeups per second average), exceeding limit of 150 wakeups per second over 300 seconds

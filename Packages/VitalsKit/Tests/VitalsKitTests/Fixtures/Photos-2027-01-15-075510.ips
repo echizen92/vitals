@@ -1,0 +1,16 @@
+{"app_name": "Photos", "timestamp": "2027-01-15 07:55:10.00 +0000", "bug_type": "309", "os_version": "iPhone OS 27.1 (25B80)", "bundleID": "com.apple.mobileslideshow", "name": "Photos"}
+{
+ "procName": "Photos",
+ "captureTime": "2027-01-15 07:55:10.42 +0000",
+ "bundleInfo": {
+  "CFBundleIdentifier": "com.apple.mobileslideshow"
+ },
+ "exception": {
+  "type": "EXC_BAD_ACCESS",
+  "signal": "SIGSEGV"
+ },
+ "termination": {
+  "indicator": "Namespace SIGNAL, Code 11"
+ },
+ "threads": []
+}

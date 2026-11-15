@@ -1,0 +1,9 @@
+{"timestamp": "2027-01-15 07:45:30.00 +0000", "bug_type": "202", "name": "mediaanalysisd"}
+Date/Time:        2027-01-15 07:45:30.000 +0000
+Command:          mediaanalysisd
+Path:             /System/Library/PrivateFrameworks/MediaAnalysis.framework/mediaanalysisd
+Event:            cpu usage
+Action taken:     none
+CPU:              150 seconds cpu time over 180 seconds (83% cpu average), exceeding limit of 50% cpu over 180 seconds
+Duration:         180.00s
+Steps:            42
