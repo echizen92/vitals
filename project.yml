@@ -10,7 +10,7 @@ packages:
 settings:
   base:
     MARKETING_VERSION: "1.0"
-    CURRENT_PROJECT_VERSION: "1"
+    CURRENT_PROJECT_VERSION: "2"
     SWIFT_VERSION: "6.0"
     DEVELOPMENT_TEAM: ETR554P9HN
     CODE_SIGN_STYLE: Automatic
@@ -38,7 +38,10 @@ targets:
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: Vitals
+        CFBundleDisplayName: Vitals Check-up
+        CFBundleName: Vitals Check-up
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         # Background refresh takes a timeline sample (Sampling/BackgroundSampler.swift).
         UIBackgroundModes: [fetch]
         BGTaskSchedulerPermittedIdentifiers: [sg.com.vitals.app.sample]
@@ -128,7 +131,7 @@ targets:
     info:
       path: Widgets/Info.plist
       properties:
-        CFBundleDisplayName: Vitals
+        CFBundleDisplayName: Vitals Check-up
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
@@ -155,7 +158,7 @@ targets:
     info:
       path: ShareExtension/Info.plist
       properties:
-        CFBundleDisplayName: Vitals
+        CFBundleDisplayName: Vitals Check-up
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
