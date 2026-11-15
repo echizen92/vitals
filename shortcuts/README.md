@@ -5,11 +5,19 @@ set a charge limit, restart the phone. Vitals runs these with the public
 `shortcuts://x-callback-url/run-shortcut` URL and gets control back through `x-success`, so it can
 measure before and after (plan 5.14a).
 
-| Shortcut | What it does | Undo |
+| Shortcut | What it does | Undo (same shortcut, input text "undo") |
 |---|---|---|
-| Vitals Cool down | Low Power Mode on, brightness 30 %, Always On off | Vitals Undo Cool down: Low Power Mode off, Always On on |
-| Vitals Save battery | Low Power Mode on, brightness 40 % | Vitals Undo Save battery: Low Power Mode off |
+| Vitals Cool down | Low Power Mode on, brightness 30 %, Always On off | Low Power Mode off, Always On on |
+| Vitals Save battery | Low Power Mode on, brightness 40 % | Low Power Mode off |
 | Vitals Restart | Restart, after the system's own confirmation | none |
+
+**One shortcut per row, named exactly as the app runs it.** Shortcuts names an imported shortcut after its file, so
+the files are `App/Resources/Shortcuts/Vitals Cool down.shortcut` and so on (spaces, not dashes): the name in
+`ReliefShortcut.rawValue`, which `run-shortcut?name=` asks for. Undo is not a second shortcut: Vitals runs the same
+one with `input=text&text=undo`, and an If on Shortcut Input picks the branch (run from the Shortcuts app with no
+input, it does the main job). Shortcuts imports only the first file of a multi-file share, so each Relief row has
+its own Add button that shares its one file. Vitals cannot tell whether a shortcut is installed; when Shortcuts
+calls back with x-error, the message names the row and points at its Add button.
 
 **Not built: Protect battery (charge limit).** unqforge's device evidence for `SetBatteryChargeLimitAction` has only
 `AppIntentDescriptor` and `setUntilTomorrow`; the limit value's parameter has never been seen in a real shortcut.
@@ -29,7 +37,8 @@ Gaps, said plainly:
 `src/*.py` is the source, written for **unqforge** (github.com/anupml/unqforge, MIT, Python 3.8+),
 pinned to `489315242d8b8bf5f84352dca31f76479f87f8fe`. The build compiles each file to a plist, converts it
 to binary (`plutil -convert binary1`) and signs it (`shortcuts sign -m anyone`) into
-`App/Resources/Shortcuts/<Name-With-Dashes>.shortcut`, where the app looks for them.
+`App/Resources/Shortcuts/<Name with spaces>.shortcut`, where the app looks for them. The build first removes the old
+`.shortcut` files there, so a renamed or dropped shortcut does not linger (it is tracked in git: stage the change).
 
 ```
 git clone https://github.com/anupml/unqforge shortcuts/.unqforge
@@ -43,7 +52,7 @@ not installed.
 ## Built (2026-11-15)
 
 Fetched with the maintainer's go-ahead, at the pinned revision (MIT). `shortcuts/build.sh` compiled, converted and signed the
-five shortcuts above into `App/Resources/Shortcuts/` (signed AEA files, about 21 KB each); the app bundles them as a
+five shortcuts (then with dashed names and separate Undo files; rebuilt as three on 2026-11-16) into `App/Resources/Shortcuts/` (signed AEA files, about 21 KB each); the app bundles them as a
 folder. Compiled parameters, checked against unqforge's device evidence: Low Power Mode `OnValue` true/false,
 brightness `WFBrightness` 0.3/0.4, Always On `OnValue` 0/1 (an integer, not a boolean), reboot
 `WFShutdownMode` "Restart". The iOS simulator has no Shortcuts app; Vitals shows "Shortcuts did not open" there.
@@ -51,5 +60,8 @@ brightness `WFBrightness` 0.3/0.4, Always On `OnValue` 0/1 (an integer, not a bo
 ## Not verified yet (Docs/needs-device.md)
 
 - Running any of them on iOS 27.2: unqforge's evidence comes from other people's real shortcuts, not this phone.
-- First-run prompts ("Allow Vitals to run shortcuts", per-action privacy prompts), whether a bundled
-  `.shortcut` file can be handed to Shortcuts from inside the app, and whether `x-success` returns.
+- First-run prompts ("Allow Vitals to run shortcuts", per-action privacy prompts), and whether `x-success` returns.
+- That the If on Shortcut Input works: the text comparison (`WFCondition` 4 against `WFConditionalActionString`,
+  input coerced to Text) is the shape unqforge records from real shortcuts, but this exact use is untested.
+- Handing a file from the app's share sheet to Shortcuts works (seen on the Duo, 2026-11-16); the name with spaces
+  is not seen yet.

@@ -100,8 +100,13 @@ device-verified. Tick items off as they are checked on the Duo (plan §11).
       quality, the system delete confirmation, items in Recently Deleted, and the free-space change after
       Recently Deleted is emptied. (Simulator: scan, selection, system confirmation and deletion verified.)
 - [x] Shortcuts built and signed with `shortcuts/build.sh` (unqforge at the pinned revision) and bundled.
-- [ ] On the Duo: "Add the Vitals shortcuts" hands all five files to Shortcuts; first-run prompts; each action works
-      on iOS 27.2 (Low Power Mode, brightness, Always On, restart); Undo; `x-success` returns to Vitals.
+- [x] Found on the Duo (2026-11-16, build 2): one "Add the Vitals shortcuts" share of five files imported only the
+      first, and named it after its file ("Vitals-Cool-down"), so Run (which asks for "Vitals Cool down") failed with
+      x-error. Fixed: files named exactly as Run asks ("Vitals Cool down.shortcut"), Undo folded into the same
+      shortcut (input text "undo"), three files, an Add button on each row. Build 2 in App Review still has the bug.
+- [ ] On the Duo: each row's Add hands its one file to Shortcuts and it is installed as "Vitals Cool down" (with spaces);
+      first-run prompts; Run and Undo each take the right branch of the If on Shortcut Input; each action works on
+      iOS 27.2 (Low Power Mode, brightness, Always On, restart); `x-success` returns to Vitals.
 - [ ] Charge limit: make a "set charge limit" shortcut by hand on the Duo, export it, decompile it with unqforge's
       `tools/decompile.py` to learn the value parameter, then add Protect battery.
 - [ ] Shortcuts app is installed and `canOpenURL("shortcuts://")` is true (needs `LSApplicationQueriesSchemes`).

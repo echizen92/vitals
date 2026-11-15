@@ -32,14 +32,12 @@ struct ReliefScreen: View {
                     ForEach(ReliefShortcut.allCases.filter { $0.bundledFile != nil }) { s in
                         ShortcutReliefRow(shortcut: s)
                     }
-                    // Shortcuts runs a shortcut by name, so each one (and its Undo) is added to the Shortcuts app once.
-                    ShareLink(items: ReliefShortcut.allBundledFiles) { Label("Add the Vitals shortcuts", systemImage: "plus.square.on.square") }
                 } else {
                     Text("The Vitals Relief shortcuts are not in this build yet. They are built and signed on a Mac (see shortcuts/README.md). Until then, the guided steps below do the same by hand.")
                         .font(.subheadline).foregroundStyle(VColor.ink2)
                 }
             } header: { TierHeader(relief: .shortcut) } footer: {
-                Text("Shortcuts can turn on Low Power Mode, dim the screen or set a charge limit, which apps cannot. Each one has an Undo.")
+                Text("Shortcuts can turn on Low Power Mode or dim the screen, which apps cannot. Tap Add once for each shortcut you want, choose Shortcuts and add it; Undo uses the same shortcut.")
             }
 
             Section {
@@ -106,13 +104,19 @@ struct ShortcutReliefRow: View {
     @Environment(AppModel.self) private var model
     var body: some View {
         AdaptiveRow {
-            ReliefRow(symbol: shortcut.symbol, title: String(shortcut.rawValue.dropFirst("Vitals ".count)),
+            ReliefRow(symbol: shortcut.symbol, title: shortcut.title,
                       subtitle: AdviceCatalog.action(shortcut.actionID)?.why ?? "")
         } trailing: {
             HStack {
+                // Shortcuts runs a shortcut by name, so each one is added to the Shortcuts app once, from its own row
+                // (Shortcuts imports only the first file of a multi-file share).
+                if let file = shortcut.bundledFile {
+                    ShareLink(item: file) { Text("Add") }.vitalsButton(.secondary)
+                        .accessibilityLabel("Add \(shortcut.rawValue) to Shortcuts")
+                }
                 Button("Run") { Task { await model.runReliefShortcut(shortcut) } }.vitalsButton(.secondary)
                     .accessibilityLabel("Run \(shortcut.rawValue)")
-                if shortcut.undo != nil {
+                if shortcut.hasUndo {
                     Button("Undo") { Task { await model.runReliefShortcut(shortcut, undo: true) } }.vitalsButton(.secondary)
                         .accessibilityLabel("Undo \(shortcut.rawValue)")
                 }

@@ -13,16 +13,16 @@ HEAD=$(git -C .unqforge rev-parse HEAD)
 OUT=../App/Resources/Shortcuts
 TMP=$(mktemp -d)
 mkdir -p "$OUT"
+# Shortcuts names an imported shortcut after its file, so the file is named exactly as the app runs it
+# (ReliefShortcut.rawValue, spaces included). Undo is the same shortcut run with the text "undo" as input.
 build() {  # source-file  shortcut-name
-  local stem=${2// /-}
-  PYTHONPATH=.unqforge:src python3 "src/$1" "$TMP/$stem.plist"
-  plutil -convert binary1 -o "$TMP/$stem.shortcut" "$TMP/$stem.plist"
-  shortcuts sign -m anyone -i "$TMP/$stem.shortcut" -o "$OUT/$stem.shortcut"
-  echo "built $OUT/$stem.shortcut"
+  PYTHONPATH=.unqforge:src python3 "src/$1" "$TMP/$2.plist"
+  plutil -convert binary1 -o "$TMP/$2.shortcut" "$TMP/$2.plist"
+  shortcuts sign -m anyone -i "$TMP/$2.shortcut" -o "$OUT/$2.shortcut"
+  echo "built $OUT/$2.shortcut"
 }
-build cool_down.py            "Vitals Cool down"
-build undo_cool_down.py       "Vitals Undo Cool down"
-build save_battery.py         "Vitals Save battery"
-build undo_save_battery.py    "Vitals Undo Save battery"
-build restart.py              "Vitals Restart"
+rm -f "$OUT"/*.shortcut
+build cool_down.py     "Vitals Cool down"
+build save_battery.py  "Vitals Save battery"
+build restart.py       "Vitals Restart"
 rm -rf "$TMP"

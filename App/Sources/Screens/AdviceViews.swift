@@ -118,8 +118,10 @@ struct ActionDetailView: View {
     @ViewBuilder var buttons: some View {
         switch action.relief {
         case .shortcut:
-            if let s = shortcut, s.bundledFile != nil {
+            if let s = shortcut, let file = s.bundledFile {
                 Button("Run \(s.rawValue)") { Task { await model.runReliefShortcut(s); dismiss() } }.vitalsButton(.primary)
+                // Run works only once the shortcut is in the Shortcuts app; Vitals cannot check, so offer the add here too.
+                ShareLink(item: file) { Text("Add to Shortcuts first") }.vitalsButton(.secondary)
             } else {
                 Text("This shortcut is not in this build yet; follow the steps by hand.").font(.subheadline).foregroundStyle(VColor.ink2)
                 markDoneButton

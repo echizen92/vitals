@@ -17,3 +17,19 @@ ALERT = "is.workflow.actions.alert"
 
 def new():
     return SC()  # noqa: F405
+
+
+# Shortcut Input: what Vitals passes with run-shortcut's `input=text&text=undo`. Run from the Shortcuts app
+# itself there is no input, so the If falls through to the main branch.
+SHORTCUT_INPUT = {"Type": "ExtensionInput"}
+UNDO = "undo"
+
+
+def new_with_undo():
+    """A shortcut that does its job, or undoes it when its input is the text "undo" (one file to add, not two)."""
+    s = new()
+    s.meta.update({
+        "WFWorkflowInputContentItemClasses": ["WFStringContentItem"],
+        "WFWorkflowHasShortcutInputVariables": True,
+    })
+    return s

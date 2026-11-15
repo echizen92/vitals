@@ -60,9 +60,8 @@ final class AppModel {
     var reliefMessage: String?
 
     func runReliefShortcut(_ s: ReliefShortcut, undo: Bool = false) async {
-        let name = undo ? (s.undo ?? s.rawValue) : s.rawValue
         if !undo { pendingRelief = (s.actionID, await snapshot()) }
-        guard let url = ReliefShortcut.runURL(name, actionID: undo ? "undo" : s.actionID) else { return }
+        guard let url = s.runURL(undo: undo) else { return }
         let opened = await UIApplication.shared.open(url)
         if !opened { reliefMessage = "Shortcuts did not open. Is the Shortcuts app installed?" }
     }
@@ -392,10 +391,20 @@ final class AppModel {
             if let p = pendingRelief, p.actionID == id, let a = AdviceCatalog.action(p.actionID) {
                 pendingRelief = nil
                 Task { await markDone(a, finding: nil, performedBy: "shortcut", before: p.before); reliefMessage = "\(a.title): done. Vitals will report the result." }
-            } else if id == "undo" { reliefMessage = "Undone." }
+            } else if id?.hasPrefix("undo.") == true { reliefMessage = "Undone." }
         case "relief-cancel", "relief-error":
             pendingRelief = nil
-            reliefMessage = host == "relief-cancel" ? "Cancelled in Shortcuts. Nothing changed." : "Shortcuts reported an error. Is the Vitals shortcut added?"
+            if host == "relief-cancel" {
+                reliefMessage = "Cancelled in Shortcuts. Nothing changed."
+            } else {
+                // Vitals cannot see which shortcuts are installed, so point at the row's own Add button.
+                let id = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first { $0.name == "action" }?.value
+                if let s = id.flatMap(ReliefShortcut.forCallback) {
+                    reliefMessage = "Shortcuts could not run “\(s.rawValue)”. If it is not in the Shortcuts app yet, tap Add next to \(s.title) below, then Run again."
+                } else {
+                    reliefMessage = "Shortcuts reported an error. If the shortcut is not in the Shortcuts app yet, tap its Add button below, then Run again."
+                }
+            }
         case "scan":
             tab = .checkup; selectedArea = nil
             pendingScan = true
