@@ -34,11 +34,13 @@ struct OnboardingView: View {
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
 
-            HStack(spacing: Space.l) {
+            HStack(alignment: .center, spacing: Space.m) {
                 PageDots(count: pages, current: page)
                 Spacer()
+                // Two real controls of different weight, same height, one baseline.
                 if page < pages - 1 {
-                    Button("Skip") { done() }.foregroundStyle(VColor.ink2)
+                    Button("Skip") { done() }
+                        .vitalsButton(.secondary)
                 }
                 Button(page < pages - 1 ? "Next" : "Start") {
                     if page < pages - 1 { withAnimation(Motion.change(motion)) { page += 1 } } else { done() }

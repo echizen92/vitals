@@ -36,7 +36,7 @@ struct PhoneModelView: View {
                     Canvas { ctx, _ in drawBody(&ctx, g: g, now: context.date) }
                     ForEach(g.regions, id: \.area) { r in
                         RegionTile(area: r.area, status: status(r.area), scanning: scan.phase == .running && scan.finished[r.area] == nil,
-                                   compact: r.rect.height < 52, fade: 1, onSelect: onSelect)
+                                   compact: r.rect.height < 76, fade: 1, onSelect: onSelect)
                             .frame(width: r.rect.width, height: r.rect.height)
                             .offset(x: r.rect.minX, y: r.rect.minY)
                     }
@@ -263,7 +263,14 @@ private struct RegionTile: View {
                     Text(area.shortTitle).font(.caption.weight(.semibold)).foregroundStyle(ink).lineLimit(1)
                     if let status { StatusMark(status, size: 10) }
                 }
+                .padding(.vertical, 8)   // the mark never touches the tile's edge; too short → the row layout below
             }
+            HStack(spacing: 5) {
+                Image(systemName: area.symbol).font(.caption.weight(.semibold))
+                Text(area.shortTitle).font(.caption.weight(.semibold)).lineLimit(1)
+                if let status { StatusMark(status, size: 9) }
+            }
+            .foregroundStyle(ink)
             HStack(spacing: 4) {
                 Image(systemName: area.symbol).font(.caption.weight(.semibold)).foregroundStyle(ink)
                 if let status { StatusMark(status, size: 9) }

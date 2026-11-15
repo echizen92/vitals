@@ -187,6 +187,14 @@ extension View {
 private struct VitalsButtonModifier: ViewModifier {
     var kind: VitalsButtonKind
     var size: ControlSize
+    #if os(macOS)
+    // An inactive Mac window greys the prominent bezel; a forced paper label would vanish on it, so the system
+    // chooses the label colour then.
+    @Environment(\.appearsActive) private var appearsActive
+    #else
+    private let appearsActive = true
+    #endif
+    private var primaryLabel: Color? { appearsActive ? VColor.ground : nil }
 
     func body(content: Content) -> some View {
         switch kind {
@@ -216,19 +224,31 @@ private struct VitalsButtonModifier: ViewModifier {
 
     @ViewBuilder private func styledPrimary(_ v: some View) -> some View {
         if #available(iOS 26.0, macOS 26.0, *) {
-            v.foregroundStyle(VColor.ground).buttonStyle(.glassProminent).tint(VColor.ink)
+            v.foregroundStyle(primaryLabel.map(AnyShapeStyle.init) ?? AnyShapeStyle(.primary)).buttonStyle(.glassProminent).tint(VColor.ink)
         } else {
-            v.foregroundStyle(VColor.ground).buttonStyle(.borderedProminent).tint(VColor.ink)
+            v.foregroundStyle(primaryLabel.map(AnyShapeStyle.init) ?? AnyShapeStyle(.primary)).buttonStyle(.borderedProminent).tint(VColor.ink)
         }
     }
 
     @ViewBuilder private func destructive(_ v: some View) -> some View {
-        if #available(iOS 26.0, macOS 26.0, *) { v.buttonStyle(.glass) } else { v.buttonStyle(.bordered) }
+        if #available(iOS 26.0, macOS 26.0, *) {
+            #if os(macOS)
+            v.buttonStyle(.bordered)
+            #else
+            v.buttonStyle(.glass)
+            #endif
+        } else { v.buttonStyle(.bordered) }
     }
 
     @ViewBuilder private func styledSecondary(_ v: some View) -> some View {
         if #available(iOS 26.0, macOS 26.0, *) {
+            #if os(macOS)
+            // macOS glass takes the inherited tint (ink) and fills like primary, and clearing the tint hides the
+            // label; the standard bordered push button is the Mac's secondary control.
+            v.buttonStyle(.bordered)
+            #else
             v.foregroundStyle(VColor.ink).buttonStyle(.glass)
+            #endif
         } else {
             v.foregroundStyle(VColor.ink).buttonStyle(.bordered).tint(VColor.ink)
         }
