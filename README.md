@@ -112,7 +112,9 @@ it:
 protections, so only turn it on when you need live readings, and turn it off afterwards.
 
 The Mac app removes the phone's serial number and UDID (its unique device ID) from everything it saves.
-It will be a direct download, not on the Mac App Store, and will bundle everything it needs (coming).
+**Download:** [Vitals Companion for Mac](https://github.com/echizen92/vitals/releases/latest) (a `.dmg`, for Macs
+with Apple silicon). It is signed and notarised by Apple and carries everything it needs, so there is nothing else
+to install. It is not on the Mac App Store.
 
 ---
 
