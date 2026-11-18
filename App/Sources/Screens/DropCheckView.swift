@@ -30,7 +30,6 @@ struct DropCheckView: View {
         .navigationTitle(stage == .intro || stage == .summary ? "Drop check" : "")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isRunning)
-        .toolbar(isRunning ? .hidden : .automatic, for: .tabBar)
         .toolbar {
             if isRunning {
                 ToolbarItem(placement: .cancellationAction) {
@@ -64,11 +63,10 @@ struct DropCheckView: View {
                 Text("One check goes through everything a drop can damage: the screen and touch, cameras, speakers and microphones, buttons, Face ID, sensors and radios. Vitals reads the battery, heat and storage on its own first.")
                     .font(.body).foregroundStyle(VColor.ink2).fixedSize(horizontal: false, vertical: true)
                 VStack(alignment: .leading, spacing: Space.s) {
-                    Label("\(plan.count) checks, about 5 minutes", systemImage: "clock")
-                    Label("Each one tells you what to do; skip any you like", systemImage: "forward")
-                    Label("Nothing from the camera or microphone is kept", systemImage: "lock")
+                    IntroLine(symbol: "clock", text: "\(plan.count) checks, about 5 minutes")
+                    IntroLine(symbol: "forward", text: "Each one tells you what to do; skip any you like")
+                    IntroLine(symbol: "lock", text: "Nothing from the camera or microphone is kept")
                 }
-                .font(.subheadline).foregroundStyle(VColor.ink)
                 Button { start() } label: { Text("Start").frame(maxWidth: .infinity) }
                     .vitalsButton(.primary)
                     .padding(.top, Space.s)
@@ -85,7 +83,10 @@ struct DropCheckView: View {
         startedAt = .now
         stage = .checkup
         Task {
+            // The check-up can finish in under a second; keep its step up long enough to read.
+            async let minimum: Void = { try? await Task.sleep(for: .seconds(2)) }()
             await model.runCheckup()
+            await minimum
             if stage == .checkup { stage = plan.isEmpty ? .summary : .test(0) }
         }
     }
@@ -109,7 +110,9 @@ struct DropCheckView: View {
     private func testStep(_ i: Int) -> some View {
         let kind = plan[i]
         return VStack(spacing: 0) {
+            // Same column as the test below it (TestPage: 720 pt wide, centred, 16 pt padding).
             progress(step: i + 1, title: "").padding(.horizontal, Space.l).padding(.top, Space.s)
+                .frame(maxWidth: 720).frame(maxWidth: .infinity)
             HardwareTestView(kind: kind)
                 .id(kind)   // fresh state for every test
                 .environment(\.testRunAdvance) { advance(from: i) }
@@ -222,6 +225,19 @@ struct DropCheckView: View {
                 .accessibilityHint(status == .good ? "Opens the test" : "Runs this test now")
             }
         }
+    }
+}
+
+/// An icon in a fixed column and its text, so the lines start at the same place.
+private struct IntroLine: View {
+    var symbol: String
+    var text: String
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: Space.m) {
+            Image(systemName: symbol).frame(width: 22).accessibilityHidden(true)
+            Text(text).fixedSize(horizontal: false, vertical: true)
+        }
+        .font(.subheadline).foregroundStyle(VColor.ink)
     }
 }
 
