@@ -55,6 +55,7 @@ final class AppModel {
     var batteryShares: BatteryScreenshotParser.Result?
     var showReport = false
     var showRelief = false
+    var openPhotoCleanup = false
     /// A relief shortcut handed to Shortcuts; measured when Shortcuts calls back.
     var pendingRelief: (actionID: String, before: MetricsSnapshot)?
     var reliefMessage: String?
@@ -120,6 +121,10 @@ final class AppModel {
         companionTotals = (try? await store.get([ProcessTotal].self, key: DocKey.companionTotals)) ?? []
         batteryShares = try? await store.get(BatteryScreenshotParser.Result.self, key: DocKey.batteryShares)
         let args = ProcessInfo.processInfo.arguments
+        // Simulator/debug: -openPhotoCleanup lands on Relief > Photos clean-up, for screenshots.
+        if args.contains("-openPhotoCleanup"), isSimulatorOrDebug {
+            tab = .optimise; showRelief = true; openPhotoCleanup = true
+        }
         if args.contains("-syntheticDay"), !samples.contains(where: { $0.source == .fixture }) {
             await addSyntheticDay()
         }

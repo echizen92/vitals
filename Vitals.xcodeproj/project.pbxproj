@@ -49,6 +49,7 @@
 		9032987B70D7BDD245847674 /* VitalsKit in Frameworks */ = {isa = PBXBuildFile; productRef = 15EA2468A4186EE2E5C60AD9 /* VitalsKit */; };
 		905DDB38A4A6F62F48A37D94 /* VitalsWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F354AF3F2932E2A5DD9A950 /* VitalsWidgetBundle.swift */; };
 		922550638A70DD944D008C6B /* Stages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00FE5AB934A5459966161A8E /* Stages.swift */; };
+		94A8A2F3F5F35B79908159C6 /* PhotoViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67CE67B829D1C1370B485F8A /* PhotoViewer.swift */; };
 		96A538813201C1F6A54B6AF5 /* CaseViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04F18085C9F384A996AD66 /* CaseViews.swift */; };
 		97AFBC29A739755BC215A1F7 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCA3B577569261B54EF3E65 /* ShareViewController.swift */; };
 		98404CCDC2573372EBAD3276 /* RadioTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3136314B345C9026DEFE9FCC /* RadioTests.swift */; };
@@ -146,6 +147,7 @@
 		5D466C017526E350A86CB477 /* AdviceViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdviceViews.swift; sourceTree = "<group>"; };
 		5EA0E3472009EDCFD3655FA6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		65CDF0BB4319246E8C145384 /* BackgroundSampler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSampler.swift; sourceTree = "<group>"; };
+		67CE67B829D1C1370B485F8A /* PhotoViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewer.swift; sourceTree = "<group>"; };
 		7516CB2A8B8EF1CCD02374A0 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		75821D4E359A87FBD028FC4C /* HeatFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatFieldView.swift; sourceTree = "<group>"; };
 		7ADF0F6E4511C58EA89A3629 /* TestsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestsScreen.swift; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				5BCF19F0A6722687E9FE1872 /* PhotoCleanup.swift */,
+				67CE67B829D1C1370B485F8A /* PhotoViewer.swift */,
 				C2A095DDA681B0F687F5C938 /* ReliefScreen.swift */,
 				17D15B3584FFAE6518CF6C5E /* ShortcutRunner.swift */,
 			);
@@ -682,6 +685,7 @@
 				00205B2B7B0C50D3A3CE85FD /* PerformanceViews.swift in Sources */,
 				1A78B003331E9E96EB7FED82 /* PhoneModelView.swift in Sources */,
 				4766EBDBC74880DDAE33A3F1 /* PhotoCleanup.swift in Sources */,
+				94A8A2F3F5F35B79908159C6 /* PhotoViewer.swift in Sources */,
 				E1652DDC7A31F7824FDB4EEC /* ProcessName.swift in Sources */,
 				98404CCDC2573372EBAD3276 /* RadioTests.swift in Sources */,
 				F19FD5DCA93CF8D9BF8BFA64 /* RecheckReminder.swift in Sources */,
@@ -842,7 +846,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = ETR554P9HN;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -944,7 +948,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = ETR554P9HN;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

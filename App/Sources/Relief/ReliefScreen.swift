@@ -57,6 +57,7 @@ struct ReliefScreen: View {
         .scrollContentBackground(.hidden)
         .vitalsGround()
         .navigationTitle("Relief")
+        .navigationDestination(isPresented: Bindable(model).openPhotoCleanup) { PhotoCleanupView() }
         .sheet(item: $detail) { a in NavigationStack { ActionDetailView(action: a, findingID: nil) } }
         .confirmationDialog("Remove every file you shared into Vitals?", isPresented: $confirmClear, titleVisibility: .visible) {
             Button("Remove", role: .destructive) {

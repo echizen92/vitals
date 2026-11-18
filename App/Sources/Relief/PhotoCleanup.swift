@@ -4,7 +4,8 @@ import VitalsKit
 import VitalsDesign
 
 /// "Vitals does it": photo and video clean-up (plan §5.14a). Permission is asked only when the person opens
-/// this screen. Everything is analysed on the phone. Deletion goes through the system confirmation into
+/// this screen. Everything is analysed on the phone. Nothing is marked for the person: they look at items
+/// (the viewer plays videos and zooms photos) and mark them. Deletion goes through the system confirmation into
 /// Recently Deleted. Sizes before deletion are ESTIMATES (PhotoKit has no public file-size API); the result
 /// is then MEASURED as free space before and after.
 @MainActor
@@ -15,21 +16,42 @@ final class PhotoCleanupModel {
         let title: String
         let why: String
         var assets: [PHAsset]
-        var selected: Set<String>
-        var estimatedBytes: Double { assets.filter { selected.contains($0.localIdentifier) }.map(PhotoCleanupModel.estimate).reduce(0, +) }
     }
 
     var status: PHAuthorizationStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
     var groups: [Group] = []
+    /// One item, one state: an asset that sits in two groups (a screen recording that is also one of the largest
+    /// videos) shares this one mark, and the totals count it once.
+    var marked: Set<String> = []
     var scanning = false
+    var deleting = false
     var lastResult: String?
+
+    /// Every asset found, once each, so totals and Review never count an item twice.
+    private var assetsByID: [String: PHAsset] = [:]
+
+    var markedAssets: [PHAsset] {
+        // In the order they appear on screen, first appearance only.
+        var seen = Set<String>()
+        return groups.flatMap(\.assets).filter { marked.contains($0.localIdentifier) && seen.insert($0.localIdentifier).inserted }
+    }
+    var markedBytes: Double { marked.compactMap { assetsByID[$0] }.map(Self.estimate).reduce(0, +) }
+
+    func isMarked(_ a: PHAsset) -> Bool { marked.contains(a.localIdentifier) }
+    func setMarked(_ a: PHAsset, _ on: Bool) {
+        if on { marked.insert(a.localIdentifier) } else { marked.remove(a.localIdentifier) }
+    }
+    func toggle(_ a: PHAsset) { setMarked(a, !isMarked(a)) }
 
     func requestAndScan() async {
         if status == .notDetermined { status = await PHPhotoLibrary.requestAuthorization(for: .readWrite) }
         guard status == .authorized || status == .limited else { return }
         scanning = true
         defer { scanning = false }
-        groups = await Task.detached(priority: .userInitiated) { Self.scan() }.value
+        let found = await Task.detached(priority: .userInitiated) { Self.scan() }.value
+        groups = found
+        assetsByID = Dictionary(found.flatMap(\.assets).map { ($0.localIdentifier, $0) }, uniquingKeysWith: { a, _ in a })
+        marked = marked.filter { assetsByID[$0] != nil }   // drop marks for items that are gone
     }
 
     nonisolated static func scan() -> [Group] {
@@ -56,15 +78,13 @@ final class PhotoCleanupModel {
             shots.filter { !$0.burstSelectionTypes.contains(.autoPick) && !$0.burstSelectionTypes.contains(.userPick) }
         }
         let bigVideos = videos.sorted { estimate($0) > estimate($1) }.prefix(20)
-        func g(_ id: String, _ t: String, _ w: String, _ a: [PHAsset], preselect: Bool) -> Group {
-            Group(id: id, title: t, why: w, assets: a, selected: preselect ? Set(a.map(\.localIdentifier)) : [])
-        }
+        func g(_ id: String, _ t: String, _ w: String, _ a: [PHAsset]) -> Group { Group(id: id, title: t, why: w, assets: a) }
         return [
-            g("dupes", "Likely duplicates", "Same size and length, taken in the same second. One copy of each is kept.", duplicates, preselect: true),
-            g("bursts", "Extra burst shots", "Burst photos other than the one chosen as the burst's best.", Array(burstExtras), preselect: false),
-            g("screenshots", "Screenshots older than 30 days", "Usually kept by accident.", screenshots, preselect: false),
-            g("recordings", "Screen recordings", "Often large and rarely rewatched.", recordings, preselect: false),
-            g("videos", "Largest videos", "Review these one by one. Nothing is selected for you.", Array(bigVideos), preselect: false),
+            g("dupes", "Likely duplicates", "Same size and length, taken in the same second as another item, which stays.", duplicates),
+            g("bursts", "Extra burst shots", "Burst photos other than the one chosen as the burst's best.", Array(burstExtras)),
+            g("screenshots", "Screenshots older than 30 days", "Usually kept by accident.", screenshots),
+            g("recordings", "Screen recordings", "Often large and rarely rewatched.", recordings),
+            g("videos", "Largest videos", "Open each one to watch it before you decide.", Array(bigVideos)),
         ].filter { !$0.assets.isEmpty }
     }
 
@@ -88,10 +108,15 @@ final class PhotoCleanupModel {
         { PHAssetChangeRequest.deleteAssets(PHAsset.fetchAssets(withLocalIdentifiers: ids, options: nil)) }
     }
 
-    func delete(_ ids: Set<String>, model: AppModel) async {
+    func deleteMarked(model: AppModel) async {
+        let ids = marked
+        guard !ids.isEmpty else { return }
+        deleting = true
+        defer { deleting = false }
         let before = await model.snapshot()
         do {
             try await Self.deleteAssets(Array(ids))
+            marked = []
             if let a = AdviceCatalog.action("vitals.photoCleanup") {
                 let rec = await model.markDone(a, finding: "storage", performedBy: "vitals", before: before)
                 // Free space returns once iOS empties Recently Deleted; the measured change now may be small.
@@ -103,80 +128,238 @@ final class PhotoCleanupModel {
             lastResult = "Nothing was deleted (\(error.localizedDescription))."
         }
     }
+
+    // MARK: Words for one item (VoiceOver and the viewer)
+
+    nonisolated static func kind(_ a: PHAsset) -> String {
+        if a.mediaType == .video { return a.mediaSubtypes.contains(.videoScreenRecording) ? "Screen recording" : "Video" }
+        return a.mediaSubtypes.contains(.photoScreenshot) ? "Screenshot" : "Photo"
+    }
+
+    /// "1 minute 4 seconds": spoken length for VoiceOver.
+    nonisolated static func spokenDuration(_ seconds: Double) -> String {
+        let f = DateComponentsFormatter()
+        f.allowedUnits = seconds >= 3600 ? [.hour, .minute] : seconds >= 60 ? [.minute, .second] : [.second]
+        f.unitsStyle = .full
+        f.maximumUnitCount = 2
+        return f.string(from: seconds.rounded()) ?? "\(Int(seconds)) seconds"
+    }
+
+    /// "0:42", "12:05": the badge on video thumbnails, as Photos shows it.
+    nonisolated static func clock(_ seconds: Double) -> String {
+        let s = Int(seconds.rounded())
+        return s >= 3600 ? String(format: "%d:%02d:%02d", s / 3600, s / 60 % 60, s % 60) : String(format: "%d:%02d", s / 60, s % 60)
+    }
+
+    nonisolated static func dateText(_ a: PHAsset) -> String { a.creationDate.map { DayTimeFormatting.string($0) } ?? "Date unknown" }
+
+    /// "Video, 1 minute, Yesterday 10:02 PM, about 18.9 MB, marked for deletion"
+    nonisolated static func accessibilityLabel(_ a: PHAsset, marked: Bool) -> String {
+        var parts = [kind(a)]
+        if a.mediaType == .video { parts.append(spokenDuration(a.duration)) }
+        parts.append(dateText(a))
+        parts.append("about \(ByteFormatting.string(estimate(a)))")
+        if marked { parts.append("marked for deletion") }
+        return parts.joined(separator: ", ")
+    }
+}
+
+/// Opens the viewer on a list of items at one of them.
+struct ViewerRequest: Identifiable {
+    let id = UUID()
+    let assets: [PHAsset]
+    let start: Int
 }
 
 struct PhotoCleanupView: View {
     @Environment(AppModel.self) private var model
     @State private var cleanup = PhotoCleanupModel()
-
+    @State private var viewer: ViewerRequest?
     var body: some View {
-        List {
-            Section {
-                Text("Vitals looks through your library on this phone and suggests what to delete. You review everything; nothing goes until you confirm, and deleted items stay in Recently Deleted for 30 days.")
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: Space.xl) {
+                Text("Vitals looks through your library on this phone and suggests what to delete. Tap an item to look at it or play it, and mark what should go. Nothing goes until you confirm, and deleted items stay in Recently Deleted for 30 days.")
                     .font(.subheadline).foregroundStyle(VColor.ink2)
-            }
-            switch cleanup.status {
-            case .notDetermined:
-                Section { Button("Allow Photos access and scan") { Task { await cleanup.requestAndScan() } }.vitalsButton(.primary) }
-            case .denied, .restricted:
-                Section { Text("Photos access is off. Settings > Apps > Vitals > Photos to allow it.").foregroundStyle(VColor.attention) }
-            default:
-                if cleanup.scanning { Section { HStack { ProgressView(); Text("Scanning on this phone…") } } }
-                if cleanup.groups.isEmpty && !cleanup.scanning {
-                    Section { Text("Nothing obvious to clean up.").foregroundStyle(VColor.ink2) }
-                }
-                ForEach($cleanup.groups) { $g in
-                    Section {
-                        Text(g.why).font(.caption).foregroundStyle(VColor.ink2)
-                        ForEach(g.assets.prefix(60), id: \.localIdentifier) { a in
-                            Toggle(isOn: Binding(get: { g.selected.contains(a.localIdentifier) },
-                                                 set: { on in if on { g.selected.insert(a.localIdentifier) } else { g.selected.remove(a.localIdentifier) } })) {
-                                AssetRow(asset: a)
-                            }
-                            .tint(VColor.ink)
-                        }
-                        if !g.selected.isEmpty {
-                            Button(role: .destructive) { Task { await cleanup.delete(g.selected, model: model) } } label: {
-                                Text("Delete \(g.selected.count) (about \(ByteFormatting.string(g.estimatedBytes)))")
-                            }
-                        }
-                    } header: { SectionTitle("\(g.title) · \(g.assets.count)") }
+                    .fixedSize(horizontal: false, vertical: true)
+                content
+                if let r = cleanup.lastResult {
+                    VStack(alignment: .leading, spacing: Space.s) {
+                        SectionTitle("Result")
+                        Label(r, systemImage: "checkmark.circle").foregroundStyle(VColor.ink)
+                    }
                 }
             }
-            if let r = cleanup.lastResult {
-                Section { Label(r, systemImage: "checkmark.circle").foregroundStyle(VColor.ink) } header: { SectionTitle("Result") }
-            }
+            .padding(.horizontal, Space.l)
+            .padding(.vertical, Space.l)
         }
-        .scrollContentBackground(.hidden)
+        .safeAreaInset(edge: .bottom) {
+            if !cleanup.groups.isEmpty { SelectionBar(cleanup: cleanup, review: review) }
+        }
         .vitalsGround()
         .navigationTitle("Photos clean-up")
+        .fullScreenCover(item: $viewer) { r in
+            PhotoViewer(cleanup: cleanup, assets: r.assets, start: r.start)
+                .environment(model)
+        }
         .task { if cleanup.status == .authorized || cleanup.status == .limited { await cleanup.requestAndScan() } }
+    }
+
+    @ViewBuilder private var content: some View {
+        switch cleanup.status {
+        case .notDetermined:
+            Button("Allow Photos access and scan") { Task { await cleanup.requestAndScan() } }.vitalsButton(.primary)
+        case .denied, .restricted:
+            Text("Photos access is off. Settings > Apps > Vitals > Photos to allow it.").foregroundStyle(VColor.attention)
+        default:
+            if cleanup.scanning && cleanup.groups.isEmpty { HStack { ProgressView(); Text("Scanning on this phone…") } }
+            if cleanup.groups.isEmpty && !cleanup.scanning {
+                Text("Nothing obvious to clean up.").foregroundStyle(VColor.ink2)
+            }
+            ForEach(cleanup.groups) { g in
+                GroupGrid(group: g, cleanup: cleanup) { i in
+                    viewer = ViewerRequest(assets: g.assets, start: i)
+                }
+            }
+        }
+    }
+
+    private func review() {
+        let items = cleanup.markedAssets
+        guard !items.isEmpty else { return }
+        viewer = ViewerRequest(assets: items, start: 0)
     }
 }
 
-struct AssetRow: View {
-    let asset: PHAsset
-    @State private var image: UIImage?
+private struct GroupGrid: View {
+    let group: PhotoCleanupModel.Group
+    let cleanup: PhotoCleanupModel
+    let open: (Int) -> Void
+    /// 3 across on the closed Duo, more when it is open: each cell at least 104 pt.
+    private let columns = [GridItem(.adaptive(minimum: 104), spacing: Space.xs)]
+
     var body: some View {
-        HStack(spacing: Space.m) {
-            Group {
-                if let image { Image(uiImage: image).resizable().scaledToFill() } else { VColor.ink2.opacity(0.15) }
-            }
-            .frame(width: 48, height: 48).clipShape(RoundedRectangle(cornerRadius: 8))
-            .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(asset.mediaType == .video ? "Video, \(DurationFormatting.string(seconds: asset.duration))" : "Photo").font(.subheadline)
-                Text("\(asset.creationDate.map { DayTimeFormatting.string($0) } ?? "") · about \(ByteFormatting.string(PhotoCleanupModel.estimate(asset)))")
-                    .font(.caption).foregroundStyle(VColor.ink2)
+        VStack(alignment: .leading, spacing: Space.s) {
+            SectionTitle("\(group.title) · \(group.assets.count)")
+            Text(group.why).font(.caption).foregroundStyle(VColor.ink2).fixedSize(horizontal: false, vertical: true)
+            LazyVGrid(columns: columns, spacing: Space.m) {
+                ForEach(Array(group.assets.enumerated()), id: \.element.localIdentifier) { i, a in
+                    AssetCell(asset: a, cleanup: cleanup) { open(i) }
+                }
             }
         }
-        .task {
+    }
+}
+
+/// A thumbnail like Photos: tap to open, a round check in the corner to mark, a duration badge on videos and the
+/// estimated size underneath.
+private struct AssetCell: View {
+    let asset: PHAsset
+    let cleanup: PhotoCleanupModel
+    let open: () -> Void
+    @State private var image: UIImage?
+    @Environment(\.displayScale) private var scale
+
+    var body: some View {
+        let marked = cleanup.isMarked(asset)
+        VStack(alignment: .leading, spacing: Space.xs) {
+            ZStack(alignment: .topTrailing) {
+                Color.clear
+                    .aspectRatio(1, contentMode: .fit)
+                    .overlay {
+                        if let image { Image(uiImage: image).resizable().scaledToFill() } else { VColor.ink2.opacity(0.15) }
+                    }
+                    .overlay(alignment: .bottomLeading) {
+                        if asset.mediaType == .video {
+                            HStack(spacing: 3) {
+                                Image(systemName: "play.fill").font(.system(size: 9, weight: .bold))
+                                Text(PhotoCleanupModel.clock(asset.duration)).font(.caption2.weight(.semibold)).monospacedDigit()
+                            }
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 6).padding(.vertical, 3)
+                            .background(.black.opacity(0.55), in: Capsule())
+                            .padding(6)
+                        }
+                    }
+                    .overlay { if marked { Color.black.opacity(0.25) } }
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay { if marked { RoundedRectangle(cornerRadius: 10).strokeBorder(VColor.problem, lineWidth: 3) } }
+                    .contentShape(RoundedRectangle(cornerRadius: 10))
+                    .onTapGesture(perform: open)
+                // A sibling, not an overlay of the open action, so a tap on the check marks and does not open.
+                Button { cleanup.toggle(asset) } label: { MarkCheck(marked: marked) }
+                    .buttonStyle(.plain)
+                    .accessibilityHidden(true)   // the cell's own action does this for VoiceOver
+            }
+            Text("about \(ByteFormatting.string(PhotoCleanupModel.estimate(asset)))")
+                .font(.caption2).foregroundStyle(marked ? VColor.problem : VColor.ink2)
+                .lineLimit(1)
+                .accessibilityHidden(true)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(PhotoCleanupModel.accessibilityLabel(asset, marked: marked))
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint("Opens it to look at or play.")
+        .accessibilityAction { open() }
+        .accessibilityAction(named: marked ? "Unmark" : "Mark for deletion") { cleanup.toggle(asset) }
+        .task(id: asset.localIdentifier) {
             let opts = PHImageRequestOptions()
             opts.deliveryMode = .opportunistic
-            opts.isNetworkAccessAllowed = false
-            PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: 96, height: 96), contentMode: .aspectFill, options: opts) { img, _ in
-                Task { @MainActor in image = img }
+            opts.isNetworkAccessAllowed = true
+            opts.resizeMode = .fast
+            let side = 140 * scale
+            Thumbnails.manager.requestImage(for: asset, targetSize: CGSize(width: side, height: side), contentMode: .aspectFill, options: opts) { img, _ in
+                Task { @MainActor in if let img { image = img } }
             }
         }
+    }
+}
+
+enum Thumbnails {
+    @MainActor static let manager = PHCachingImageManager()
+}
+
+/// The round check in a thumbnail's corner. Empty ring when not marked; filled problem colour with a check when
+/// marked for deletion. 44 pt hit area.
+struct MarkCheck: View {
+    var marked: Bool
+    var body: some View {
+        ZStack {
+            Circle().fill(marked ? AnyShapeStyle(VColor.problem) : AnyShapeStyle(.black.opacity(0.2)))
+            Circle().strokeBorder(.white, lineWidth: 1.5)
+            if marked { Image(systemName: "checkmark").font(.system(size: 12, weight: .bold)).foregroundStyle(.white) }
+        }
+        .frame(width: 24, height: 24)
+        .shadow(color: .black.opacity(0.3), radius: 2)
+        .frame(width: 44, height: 44)
+        .contentShape(Rectangle())
+    }
+}
+
+/// The bar that stays at the bottom: what is marked, its estimated size, Review and Delete.
+struct SelectionBar: View {
+    let cleanup: PhotoCleanupModel
+    let review: () -> Void
+    @Environment(AppModel.self) private var model
+
+    var body: some View {
+        let n = cleanup.marked.count
+        HStack(spacing: Space.m) {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(n == 0 ? "Nothing marked" : "\(n) marked").font(.headline).foregroundStyle(VColor.ink)
+                if n > 0 { Text("about \(ByteFormatting.string(cleanup.markedBytes))").font(.caption).foregroundStyle(VColor.ink2) }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .combine)
+            Button("Review", action: review).vitalsButton(.secondary, size: .regular).disabled(n == 0)
+            Button(role: .destructive) { Task { await cleanup.deleteMarked(model: model) } } label: {
+                Text("Delete").foregroundStyle(n == 0 ? AnyShapeStyle(.secondary) : AnyShapeStyle(VColor.problem))
+            }
+            .vitalsButton(.destructive, size: .regular)
+            .disabled(n == 0 || cleanup.deleting)
+            .accessibilityLabel(n == 0 ? "Delete" : "Delete \(n) marked")
+        }
+        .padding(.horizontal, Space.l).padding(.vertical, Space.m)
+        .background(.bar)
+        .overlay(alignment: .top) { VColor.hairline.frame(height: 0.5) }
     }
 }
