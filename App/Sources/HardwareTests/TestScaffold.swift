@@ -12,6 +12,7 @@ struct TestPage<Content: View>: View {
 
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.testRunAdvance) private var advance
     @State private var notes = ""
     @State private var saved: TestOutcome?
 
@@ -64,7 +65,8 @@ struct TestPage<Content: View>: View {
         Button {
             saved = o
             model.saveHardwareResult(HardwareTestResult(kind: kind, outcome: o, notes: notes, details: details))
-            dismiss()
+            // Inside the drop check the run moves on to the next test; on its own the test closes.
+            if let advance { advance() } else { dismiss() }
         } label: {
             Label(title, systemImage: symbol).frame(minWidth: 90)
         }
@@ -129,5 +131,17 @@ struct AdaptiveRow<Leading: View, Trailing: View>: View {
             HStack { leading; Spacer(minLength: Space.s); trailing }
             VStack(alignment: .leading, spacing: Space.s) { leading; trailing }
         }
+    }
+}
+
+/// Set by the drop check: called after a test records its outcome, in place of closing the test.
+private struct TestRunAdvanceKey: EnvironmentKey {
+    static let defaultValue: (@MainActor () -> Void)? = nil
+}
+
+extension EnvironmentValues {
+    var testRunAdvance: (@MainActor () -> Void)? {
+        get { self[TestRunAdvanceKey.self] }
+        set { self[TestRunAdvanceKey.self] = newValue }
     }
 }

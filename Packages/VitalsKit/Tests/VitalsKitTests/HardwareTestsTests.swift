@@ -52,3 +52,36 @@ import Testing
         #expect(try JSON.decode([HardwareTestResult].self, JSON.encode(r)) == r)
     }
 }
+
+@Suite struct DropCheckTests {
+    @Test func planCoversEveryTestOnce() {
+        #expect(Set(DropCheck.order) == Set(HardwareTestKind.allCases))
+        #expect(DropCheck.order.count == HardwareTestKind.allCases.count)
+        #expect(DropCheck.plan(isDuo: false) == HardwareTestKind.suite(isDuo: false).sorted { DropCheck.order.firstIndex(of: $0)! < DropCheck.order.firstIndex(of: $1)! })
+        #expect(DropCheck.plan(isDuo: true).contains(.hinge))
+        #expect(!DropCheck.plan(isDuo: false).contains(.hinge))
+        #expect(DropCheck.plan(isDuo: false).first == .display)
+    }
+
+    @Test func summaryIgnoresResultsFromBeforeTheRun() {
+        let start = Date(timeIntervalSince1970: 1_000)
+        let plan: [HardwareTestKind] = [.display, .touch, .cameras, .speakers]
+        let results = [
+            HardwareTestResult(kind: .display, outcome: .passed, testedAt: start.addingTimeInterval(5)),
+            HardwareTestResult(kind: .touch, outcome: .passed, testedAt: start.addingTimeInterval(-60)),   // old: not this run
+            HardwareTestResult(kind: .cameras, outcome: .failed, testedAt: start.addingTimeInterval(30)),
+            HardwareTestResult(kind: .speakers, outcome: .skipped, testedAt: start.addingTimeInterval(40)),
+        ]
+        let s = DropCheck.summarize(plan: plan, results: results, since: start)
+        #expect(s.passed == [.display])
+        #expect(s.failed == [.cameras])
+        #expect(s.notChecked == [.touch, .speakers])
+        #expect(s.verdict == .damageFound)
+    }
+
+    @Test func verdicts() {
+        #expect(DropCheck.Summary(passed: [.display]).verdict == .allPassed)
+        #expect(DropCheck.Summary(passed: [.display], notChecked: [.nfc]).verdict == .passedWithGaps)
+        #expect(DropCheck.Summary(notChecked: [.nfc]).verdict == .notChecked)
+    }
+}

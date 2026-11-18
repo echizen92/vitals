@@ -11,6 +11,20 @@ struct TestsScreen: View {
         NavigationStack {
             List {
                 Section {
+                    NavigationLink { DropCheckView() } label: {
+                        HStack(spacing: Space.m) {
+                            Image(systemName: "iphone.gen3.radiowaves.left.and.right").font(.title2).frame(width: 34).foregroundStyle(VColor.ink)
+                                .accessibilityHidden(true)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Dropped your phone?").font(.headline).foregroundStyle(VColor.ink)
+                                Text("One tap runs every check a drop can affect.").font(.subheadline).foregroundStyle(VColor.ink2)
+                            }
+                        }
+                        .padding(.vertical, Space.xs)
+                        .accessibilityElement(children: .combine)
+                    }
+                }
+                Section {
                     let done = suite.filter { k in model.hardwareResults.contains { $0.kind == k } }.count
                     VStack(alignment: .leading, spacing: 6) {
                         Text("\(done) of \(suite.count) tested").font(VFont.title).foregroundStyle(VColor.ink)

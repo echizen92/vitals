@@ -32,6 +32,7 @@
 		5D66454251E3F1328865D8C8 /* ReportScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFCFD42FEC11B71856BD07 /* ReportScreen.swift */; };
 		5FA93477ECB6F6B57FA73863 /* WidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4400F5186839FC8889BF210 /* WidgetViews.swift */; };
 		5FF87F916BE5783DECFB26C3 /* VitalsKit in Frameworks */ = {isa = PBXBuildFile; productRef = 840413FA90D213A967942C2E /* VitalsKit */; };
+		612D987A91C4F04329E14DC0 /* DropCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2C55A05CBBE3F552728B328 /* DropCheckView.swift */; };
 		649C14391EF1E4210F0960E9 /* RunCheckupIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8ECD934C10569D8D499D11 /* RunCheckupIntent.swift */; };
 		6A27893FDA8904BFED8167F2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AFAC3500A40CF81FAA4F023A /* PrivacyInfo.xcprivacy */; };
 		722A4CC18F35D6C1E72C1290 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6006012DD0C8835D417345 /* OnboardingView.swift */; };
@@ -170,6 +171,7 @@
 		CC57470C503A8AACDFC7D45A /* TestScaffold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestScaffold.swift; sourceTree = "<group>"; };
 		D0D9CAF5A3E5E218891E0FAB /* Parts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parts.swift; sourceTree = "<group>"; };
 		D14FCAAE252438247C179F84 /* CompanionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionApp.swift; sourceTree = "<group>"; };
+		D2C55A05CBBE3F552728B328 /* DropCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropCheckView.swift; sourceTree = "<group>"; };
 		D4E8E3E48A62C61AA9D84D68 /* VitalsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VitalsApp.swift; sourceTree = "<group>"; };
 		D4FCC7A777441ED18896A519 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
 		D810A2BAC747D84110E9D6C3 /* PerformanceViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceViews.swift; sourceTree = "<group>"; };
@@ -422,6 +424,7 @@
 				A0391D4F9C1C55AA701F537A /* BatteryScreenshotImport.swift */,
 				8A04F18085C9F384A996AD66 /* CaseViews.swift */,
 				E2538020AD6F36CC7338D2BB /* CheckupScreen.swift */,
+				D2C55A05CBBE3F552728B328 /* DropCheckView.swift */,
 				F85AF8D243C4B9E675C3FD9C /* FourTapsGuide.swift */,
 				B2040699728873C02E6F86C3 /* HeatScreen.swift */,
 				3AC2ADCD4ED25F37339EFCD9 /* HotSpellDetailView.swift */,
@@ -661,6 +664,7 @@
 				96A538813201C1F6A54B6AF5 /* CaseViews.swift in Sources */,
 				D288B6FB8EBA05F06C212A31 /* CheckupScreen.swift in Sources */,
 				D645D2E13972B83D751D9EA9 /* CulpritTimeline.swift in Sources */,
+				612D987A91C4F04329E14DC0 /* DropCheckView.swift in Sources */,
 				EC2B693B43BDA99240B8E1A4 /* FourTapsGuide.swift in Sources */,
 				DC4FAA3A7E37BFCD13094B18 /* HeatField.metal in Sources */,
 				E4370FCD14B3CCFFF122653E /* HeatFieldView.swift in Sources */,
@@ -838,7 +842,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = ETR554P9HN;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -940,7 +944,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = ETR554P9HN;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
