@@ -201,7 +201,14 @@ Include the JSON report if you can; it is redacted by default.
 
 ## Licence
 
-- The iPhone app, widgets, share extension, VitalsKit and the shortcuts: **MIT** ([LICENSE](LICENSE)).
-- The Mac companion in `companion/`: **GPL-3.0-or-later** ([companion/LICENSE](companion/LICENSE)). It runs
-  [pymobiledevice3](https://github.com/doronz88/pymobiledevice3), which is GPL-3.0, so the companion must be
-  too. The iPhone app contains none of its code; the two only share a file format.
+All of Vitals is **GPL-3.0-or-later** ([LICENSE](LICENSE)): the iPhone app, widgets, share extension,
+VitalsKit, the shortcuts and the Mac companion. You may use, study, change and share it. If you distribute
+a changed version, you must publish its source under the same licence.
+
+- The Mac companion in `companion/` has its own copy of the licence ([companion/LICENSE](companion/LICENSE)).
+  It runs [pymobiledevice3](https://github.com/doronz88/pymobiledevice3), which is GPL-3.0. The iPhone app
+  contains none of its code; the two only share a file format.
+- Versions published before 19 November 2026 (up to commit `20a599b`) were released under the MIT licence,
+  and copies of those stay under MIT.
+- The names "Vitals" and "Vitals: Phone Check-up", the app icon and the App Store artwork are not covered by
+  the licence. Please use your own name and icon for a fork.

@@ -76,9 +76,9 @@ struct LicencesView: View {
     var body: some View {
         ScrollView {
             Text("""
-            Vitals for iPhone is released under the MIT licence. It uses no third-party code.
+            Vitals is free software, released under the GNU General Public License, version 3 or later. The source is at github.com/echizen92/vitals. The iPhone app uses no third-party code.
 
-            The Mac companion (companion/ in the source) is GPL-3.0 because it builds on pymobiledevice3, which is GPL-3.0.
+            The Mac companion (companion/ in the source) builds on pymobiledevice3, which is also GPL-3.0.
             """)
             .padding()
         }

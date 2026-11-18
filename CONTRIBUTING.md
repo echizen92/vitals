@@ -30,8 +30,13 @@ low-battery and log-filled states without a real phone.
 
 ## Licences
 
-By contributing you agree that your contribution is licensed under the same terms as the part of the project
-it touches: MIT for everything except `companion/`, which is GPL-3.0-or-later.
+By contributing you agree that:
+
+- your contribution is licensed under GPL-3.0-or-later, like the rest of Vitals, and
+- the maintainer may also distribute it as part of Vitals through Apple's App Store, under Apple's terms.
+
+The second point is needed because Apple's App Store terms add restrictions that the GPL does not allow on
+its own. It covers only the official Vitals app; everyone else gets your contribution under the GPL alone.
 
 ## Reporting problems
 

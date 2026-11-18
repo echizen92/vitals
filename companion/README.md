@@ -5,8 +5,8 @@ count, design and full-charge capacity, current, charger watts), and, with Devel
 writing to storage or using the CPU right now**, as rates. Built on
 [pymobiledevice3](https://github.com/doronz88/pymobiledevice3).
 
-Licence: **GPL-3.0-or-later** (`LICENSE`), because pymobiledevice3 is GPL-3.0. The iOS app is MIT and contains none of
-this code; the two only share a JSON file format (`Docs/report-schema.md`).
+Licence: **GPL-3.0-or-later** (`LICENSE`), like the rest of Vitals; pymobiledevice3 is GPL-3.0 as well. The iOS app
+contains none of this code; the two only share a JSON file format (`Docs/report-schema.md`).
 
 ## Access tiers (said up front, never pushed)
 - **Tier 0, phone only**: the Vitals app with logs shared on the phone. Most findings start here.
