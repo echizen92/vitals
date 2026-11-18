@@ -5,6 +5,8 @@ draining fast, and what to do about it.
 
 Everything happens on your phone. There is no account, no tracking and no server.
 
+**[Get it free on the App Store](https://apps.apple.com/app/id6835033082)**
+
 <p>
   <img src="Docs/images/checkup.png" width="240" alt="Check-up: a drawing of the phone with each part coloured by its status, and the verdict 'Heat: 2 hot spells in the last 24 hours'">
   <img src="Docs/images/hot-spell.png" width="240" alt="A hot spell: the processes that were busy at the time rise out of the heat timeline">
@@ -52,7 +54,8 @@ or **Inferred** (worked out by Vitals).
 
 ### How to get it
 
-- **App Store:** coming.
+- **App Store:** [Vitals: Phone Check-up](https://apps.apple.com/app/id6835033082), free, for iPhone with
+  iOS 18 or later.
 - **Build it yourself:** you need a Mac with Xcode 27.2 or later. See [For contributors](#for-contributors).
 
 ### Your first check-up
