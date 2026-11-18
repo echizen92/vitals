@@ -1,0 +1,6 @@
+# Relocatable CPython for the downloadable companion (python-build-standalone, astral-sh, official release).
+# Checked against the release's SHA256SUMS on 2026-11-19.
+RELEASE=20261026
+ASSET=cpython-3.13.18+20261026-aarch64-apple-darwin-install_only_stripped.tar.gz
+URL=https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.13.18%2B20261026-aarch64-apple-darwin-install_only_stripped.tar.gz
+SHA256=8392b6ea51d94391befb2c31ebe75463f045d0b69dfcf5e1bb3234e1f5fa3405

@@ -13,6 +13,7 @@ Global: --wifi (reach the phone without USB), --udid ID (when several phones), -
 """
 
 import argparse
+import hashlib
 import json
 import os
 import signal
@@ -42,10 +43,58 @@ TIER_TEXT = {
 }
 
 
-def make_backend(args):
+def device_ref(udid):
+    """A short, stable handle for one phone, so the Mac app can remember and pass a choice without ever seeing
+    or printing the UDID."""
+    return hashlib.sha256(("vitals-companion:" + str(udid)).encode()).hexdigest()[:12]
+
+
+def reachable(args, backend=None):
+    """The iPhones this Mac can reach now, one entry per phone: {ref, model, os, connection, _udid}.
+    A phone seen over both USB and Wi-Fi is listed once, as USB. Wi-Fi phones only when --wifi is on.
+    USB first. `_udid` stays inside the engine; `public()` strips it."""
+    b = backend or (SimulatedBackend(speed=getattr(args, "speed", 1.0)) if args.simulate else Pmd3CliBackend())
+    by = {}
+    for d in b.list_devices() or []:
+        udid = d.get("UniqueDeviceID") or d.get("Identifier") or d.get("SerialNumber")
+        if not udid:
+            continue
+        conn = "usb" if str(d.get("ConnectionType", "")).upper() == "USB" else "wifi"
+        if conn == "wifi" and not args.wifi:
+            continue
+        cur = by.get(udid)
+        if cur is None or (cur["connection"] == "wifi" and conn == "usb"):
+            by[udid] = {"ref": device_ref(udid), "model": d.get("ProductType"), "os": d.get("ProductVersion"),
+                        "connection": conn, "_udid": udid}
+    return sorted(by.values(), key=lambda e: (e["connection"] != "usb", str(e["model"])))
+
+
+def public(phone):
+    return {k: v for k, v in phone.items() if not k.startswith("_")}
+
+
+def make_backend(args, phones=None):
+    """The backend for the chosen phone: --udid, else the phone --device names, else the first USB phone (else
+    the first Wi-Fi one). Without this, several phones made pymobiledevice3 take the first network device, or
+    stop at an interactive prompt."""
     if args.simulate:
-        return SimulatedBackend(speed=getattr(args, "speed", 1.0))
-    return Pmd3CliBackend(udid=args.udid, wifi=args.wifi)
+        b = SimulatedBackend(speed=getattr(args, "speed", 1.0))
+        b.phone = public(reachable(args, b)[0])
+        return b
+    if args.udid:
+        return Pmd3CliBackend(udid=args.udid, wifi=args.wifi)
+    phones = reachable(args) if phones is None else phones
+    device = getattr(args, "device", None)
+    pick = next((p for p in phones if p["ref"] == device), None) if device else None
+    if device and pick is None:
+        raise BackendError("The iPhone chosen in Vitals Companion is not reachable now. Connect it, or choose another.")
+    pick = pick or (phones[0] if phones else None)
+    if pick is None:
+        # Nothing listed: the Wi-Fi route (macOS's own tunnel) can still reach a phone usbmux does not list.
+        return Pmd3CliBackend(wifi=args.wifi)
+    b = Pmd3CliBackend(udid=pick["_udid"], wifi=pick["connection"] == "wifi")
+    b.phone = public(pick)
+    return b
 
 
 def out_json(obj):
@@ -56,12 +105,25 @@ def cmd_check(args):
     """Which tier is available, said plainly, without pushing anyone to turn on Developer Mode."""
     result = {"tier": 0, "connection": None, "developerMode": None, "canRead": [], "cannotRead": [], "explain": []}
     try:
-        b = make_backend(args)
+        phones = [] if args.simulate else reachable(args)
+        result["devices"] = [public(p) for p in phones]
+        try:
+            b = make_backend(args, phones)
+        except BackendError as e:
+            if not getattr(args, "device", None):
+                raise
+            # The remembered phone is not here: say so and fall back to the preferred one.
+            result["chosenMissing"] = True
+            args.device = None
+            b = make_backend(args, phones)
     except BackendError as e:
         result["explain"] = [str(e), TIER_TEXT[0]]
         out_json(result)
         return 3
-    devices = b.list_devices() if not args.wifi else [{"ConnectionType": "Network"}]
+    if args.simulate:
+        result["devices"] = [b.phone]
+    result["chosen"] = (getattr(b, "phone", None) or {}).get("ref")
+    devices = result["devices"] or ([{"ConnectionType": "Network"}] if args.wifi else [])
     if not devices:
         result["explain"] = [NOT_SEEN, TIER_TEXT[0]]
         out_json(result)
@@ -89,6 +151,12 @@ def cmd_check(args):
                                  "finding says live rates would settle it; it lowers some protections, so turn it "
                                  "off again afterwards (Settings > Privacy & Security > Developer Mode).")
     out_json(result)
+    return 0
+
+
+def cmd_devices(args):
+    phones = reachable(args)
+    out_json({"devices": [public(p) for p in phones], "preferred": phones[0]["ref"] if phones else None})
     return 0
 
 
@@ -121,7 +189,7 @@ def cmd_capture(args):
     holder = {}
     out = os.path.expanduser(args.out or time.strftime("vitals-capture-%Y%m%d-%H%M%S"))
     cap = Capture(b, out, seconds=args.seconds, interval=args.interval, threshold=args.threshold,
-                  syslog=not args.no_syslog, crashes=not args.no_crashes, emit=_emitter(args, holder),
+                  syslog=args.syslog and not args.no_syslog, crashes=not args.no_crashes, emit=_emitter(args, holder),
                   snapshot_every=args.snapshot_every)
     holder["cap"] = cap
     signal.signal(signal.SIGTERM, lambda *_: cap.stop())
@@ -250,19 +318,22 @@ def cmd_pull(args):
 def main(argv=None):
     p = argparse.ArgumentParser(prog="vitals-companion")
     p.add_argument("--udid", help="device to use when several are connected (never printed)")
+    p.add_argument("--device", help="phone to use, by the ref `devices` lists (the Mac app passes this)")
     p.add_argument("--wifi", action="store_true", help="reach the phone over the network (no USB)")
     p.add_argument("--simulate", action="store_true", help="synthetic phone, for testing without a device")
     p.add_argument("--speed", type=float, default=1.0, help="simulated backend only: run faster than real time")
     sub = p.add_subparsers(dest="cmd", required=True)
     sub.add_parser("check", help="what this Mac can read (access tier)")
+    sub.add_parser("devices", help="the iPhones this Mac can reach now (model, connection, ref; never the UDID)")
     sub.add_parser("probe", help="device info and battery registry")
     c = sub.add_parser("capture", help="timed capture into a bundle")
     c.add_argument("--seconds", type=float, default=300)
-    c.add_argument("--interval", type=float, default=5)
+    c.add_argument("--interval", type=float, default=10, help="seconds between readings (default 10; shorter costs the phone more)")
     c.add_argument("--threshold", type=float, default=1, help="only record processes above this CPU %%")
     c.add_argument("--snapshot-every", type=float, default=None, help="extra per-process snapshots every N seconds")
     c.add_argument("--out")
-    c.add_argument("--no-syslog", action="store_true")
+    c.add_argument("--no-syslog", action="store_true", help=argparse.SUPPRESS)   # the default now; kept for old callers
+    c.add_argument("--syslog", action="store_true", help="also record syslog (costly to the phone: about 70 MB a minute on the Duo)")
     c.add_argument("--no-crashes", action="store_true")
     c.add_argument("--events", action="store_true", help="stream JSON events on stdout")
     s = sub.add_parser("snapshot", help="one per-process snapshot")
@@ -292,7 +363,7 @@ def main(argv=None):
     if args.cmd == "pull" and args.what == "crashes":
         args.what = "logs"
     try:
-        return {"check": cmd_check, "probe": cmd_probe, "capture": cmd_capture, "snapshot": cmd_snapshot,
+        return {"devices": cmd_devices, "check": cmd_check, "probe": cmd_probe, "capture": cmd_capture, "snapshot": cmd_snapshot,
                 "rates": cmd_rates, "around-action": cmd_around_action, "pull": cmd_pull}[args.cmd](args)
     except BackendError as e:
         msg = redact_text(str(e))

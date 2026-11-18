@@ -160,5 +160,43 @@ class SimulatedFlowTests(unittest.TestCase):
             shutil.rmtree(out)
 
 
+    def test_averages_divide_by_readings_not_rows(self):
+        # Three readings; Instagram appears in only one of them. Per reading: (30 + 0 + 0) / 3 = 10.
+        # Dividing by its rows (1) would say 30, the mistake this guards against.
+        readings = [{"Instagram": 30.0, "SpringBoard": 6.0}, {"SpringBoard": 3.0}, {"SpringBoard": 3.0, "sysmond": 3.0}]
+        avg = R.readings_average(readings)
+        self.assertEqual(avg["Instagram"], 10.0)
+        self.assertEqual(avg["SpringBoard"], 4.0)
+        cost = R.measurement_cost(readings)
+        self.assertEqual(cost["processes"], {"sysmond": 1.0})
+        self.assertEqual(cost["totalPercent"], 1.0)
+        self.assertEqual(cost["readings"], 3)
+        self.assertEqual(R.readings_average([]), {})
+
+    def test_cost_from_cumulative_cpu_time(self):
+        def snap(ns_sysmond, ns_app):
+            return R.normalise([{"name": "sysmond", "pid": 90, "cpuTotalUser": ns_sysmond, "cpuTotalSystem": 0, "cpuUsage": 0.4},
+                                {"name": "Instagram", "pid": 7, "cpuTotalUser": ns_app, "cpuTotalSystem": 0, "cpuUsage": 30}], 0)[0]
+        # sysmond used 6 s of CPU in 60 s: 10% of a core. Instagram is not measurement and is left out.
+        cost = R.measurement_cost_between(snap(1_000_000_000, 0), snap(7_000_000_000, 9e9), 1000, 1060)
+        self.assertEqual(cost["processes"], {"sysmond": 10.0})
+        self.assertEqual(cost["totalPercent"], 10.0)
+        self.assertIsNone(R.measurement_cost_between(snap(1, 1), snap(2, 2), 10, 10))
+
+    def test_capture_reports_measurement_cost_and_skips_syslog(self):
+        out = tempfile.mkdtemp()
+        try:
+            rc = cli.main(["--simulate", "--speed", "300", "capture", "--seconds", "3", "--interval", "10", "--out", out, "--no-crashes"])
+            self.assertEqual(rc, 0)
+            doc = json.load(open(os.path.join(out, "capture.vitalscapture")))
+            self.assertFalse(os.path.exists(os.path.join(out, "syslog.ndjson")), "syslog is off unless asked for")
+            cost = doc["capture"]["measurementCost"]
+            self.assertIn("sysmond", cost["processes"])
+            self.assertNotIn("sysmond", doc["capture"]["averageCPU"])
+            self.assertTrue(all(p["process"] != "sysmond" for p in doc["processSamples"]))
+            self.assertTrue(any("Measuring cost the phone" in n for n in doc["capture"]["notes"]))
+        finally:
+            shutil.rmtree(out)
+
 if __name__ == "__main__":
     unittest.main()

@@ -122,7 +122,9 @@ struct CompanionSettings: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
             Section("Measuring engine") {
-                TextField("Python interpreter (development only)", text: $runner.pythonOverride)
+                if runner.bundledPython == nil {
+                    TextField("Python interpreter (development only)", text: $runner.pythonOverride)
+                }
                 LabeledContent("In use", value: runner.python)
                 LabeledContent("Engine", value: runner.engineDir.path)
                 Text("Release builds use the Python runtime and pymobiledevice3 bundled inside the app. In development, companion/engine/.venv is used when present.")

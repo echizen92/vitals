@@ -4,7 +4,7 @@
   <name>/snapshots/*.json        per-process snapshots with cumulative counters (redacted)
   <name>/processes.ndjson        raw per-second CPU stream
   <name>/battery.ndjson          raw battery registry readings (identifiers redacted)
-  <name>/syslog.ndjson           raw syslog (optional)
+  <name>/syslog.ndjson           raw syslog (only when asked for: it is the costliest stream to the phone)
   <name>/crashes/                crash reports and analytics pulled at the end (optional)
 
 Per-process WRITE RATES come from two or more snapshots (rates.py), not from a single counter. Conditions
@@ -38,7 +38,7 @@ def conditions(backend, battery):
 
 
 class Capture(object):
-    def __init__(self, backend, out_dir, seconds=300, interval=5.0, threshold=1, syslog=True, crashes=True,
+    def __init__(self, backend, out_dir, seconds=300, interval=10.0, threshold=1, syslog=False, crashes=True,
                  emit=None, snapshot_every=None, lock_probe=None):
         self.backend = backend
         self.out_dir = out_dir
@@ -53,6 +53,7 @@ class Capture(object):
         self.stop_event = threading.Event()
         self.samples = []
         self.process_samples = []
+        self.readings = []    # one {process: cpu} per sample of the process stream, overhead included
         self.snapshots = []   # (normalised, taken_at)
         self.notes = []
         self.last_battery = {}
@@ -90,12 +91,21 @@ class Capture(object):
     def _process_worker(self, path):
         try:
             with open(path, "w") as raw:
-                for line in self.backend.process_stream(self.threshold):
+                stream = self.backend.process_stream(self.threshold, interval=self.interval)
+                last_at = None
+                for line in stream:
                     if self.stop_event.is_set():
                         break
                     raw.write(line)
                     now = time.time()
+                    # One sample arrives as a burst of lines; a gap of more than 2 s starts the next reading.
+                    if last_at is None or now - last_at > 2:
+                        with self._lock:
+                            self.readings.append({})
+                    last_at = now
                     for p in parse_process_line(line):
+                        with self._lock:
+                            self.readings[-1][p["name"]] = self.readings[-1].get(p["name"], 0) + p["cpu"]
                         if p["name"] in R.OVERHEAD:
                             continue
                         ps = {"takenAt": report.iso(now), "process": p["name"], "cpuPercent": round(p["cpu"], 1)}
@@ -184,8 +194,24 @@ class Capture(object):
             self.notes.append("Conditions changed during the capture: " + "; ".join(mismatches) + ".")
         with self._lock:
             procs = list(self.process_samples)
+            readings = [dict(r) for r in self.readings]
+        cost = None
+        if len(self.snapshots) >= 2:
+            (first, first_at), (last, last_at) = self.snapshots[0], self.snapshots[-1]
+            cost = R.measurement_cost_between(first, last, first_at, last_at)
+        if cost is None and readings:
+            cost = R.measurement_cost(readings)
+            cost["method"] = "live readings, averaged per reading (processes under the stream threshold are not seen)"
+        if cost:
+            self.notes.append("Measuring cost the phone about %.1f%% of one core (%s; %s). That is left out of the results."
+                              % (cost["totalPercent"],
+                                 ", ".join("%s %.1f%%" % kv for kv in sorted(cost["processes"].items(), key=lambda kv: -kv[1])) or "none seen",
+                                 cost["method"]))
+            self.emit({"type": "cost", "totalPercent": cost["totalPercent"], "processes": cost["processes"], "method": cost["method"]})
+        averages = {k: v for k, v in R.readings_average(readings).items() if k not in R.OVERHEAD}
         doc = report.build(info, self.samples, procs, self.last_battery, started, ended, self.backend.name,
-                           [self._scrub(n) for n in self.notes], rates=rate_result, conditions=self.cond, tier=tier)
+                           [self._scrub(n) for n in self.notes], rates=rate_result, conditions=self.cond, tier=tier,
+                           measurement=cost, averages=averages)
         path = os.path.join(self.out_dir, "capture.vitalscapture")
         with open(path, "w") as f:
             json.dump(redact(doc, self.ids), f, indent=1, ensure_ascii=False)

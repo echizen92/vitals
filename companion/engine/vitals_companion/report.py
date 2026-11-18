@@ -58,7 +58,7 @@ def _total(t):
 
 
 def build(info, samples, process_samples, battery_last, started, ended, backend_name, notes,
-          rates=None, conditions=None, tier=None):
+          rates=None, conditions=None, tier=None, measurement=None, averages=None):
     """Device identifiers (UDID, serial) are deliberately NOT written: the capture is meant to be shared."""
     device = {
         "model": info.get("ProductType", "iPhone"),
@@ -107,7 +107,10 @@ def build(info, samples, process_samples, battery_last, started, ended, backend_
         "capture": {"startedAt": iso(started), "endedAt": iso(ended), "backend": backend_name, "notes": notes,
                     "accessTier": tier, "conditions": conditions or [], "resets": rates.get("resets", []),
                     "wholePhoneCPU": rates.get("cpu"), "batteryKeysUsed": b.get("keysUsed", []),
-                    "measurementOverhead": "sysmond, DTServiceHub and remotepairingdeviced are the measurement itself; "
-                                           "they are left out of rates and totals."},
+                    "measurementOverhead": "sysmond, DTServiceHub, remotepairingdeviced, diagnosticd and dtfileserviced are "
+                                           "the measurement itself; they are left out of rates, totals and averages.",
+                    "measurementCost": measurement,
+                    # Percent of one core per process, averaged over readings (a reading without the process counts as 0).
+                    "averageCPU": dict(sorted((averages or {}).items(), key=lambda kv: -kv[1])[:30])},
     }
     return doc

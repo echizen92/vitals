@@ -17,7 +17,10 @@ Rules this module follows:
 
 from datetime import datetime, timezone
 
-OVERHEAD = ("sysmond", "DTServiceHub", "remotepairingdeviced")
+# The measurement itself: sysmond samples, DTServiceHub and remotepairingdeviced carry the developer connection,
+# diagnosticd serves syslog and dtfileserviced the file pulls. Left out of "busiest", rates and totals, and
+# reported on their own as what measuring cost.
+OVERHEAD = ("sysmond", "DTServiceHub", "remotepairingdeviced", "diagnosticd", "dtfileserviced")
 
 
 def _parse_ts(v):
@@ -57,7 +60,10 @@ def normalise(snapshot, taken_at):
             continue
         at = _parse_ts(p.get("timestamp"))
         cpu = p.get("cpuUsage")
+        cu, cs = p.get("cpuTotalUser"), p.get("cpuTotalSystem")
         out.append({
+            # Cumulative CPU time in nanoseconds (sysmon's cpuTotalUser + cpuTotalSystem), when the phone gives it.
+            "cpuTimeNs": (cu + cs) if isinstance(cu, (int, float)) and isinstance(cs, (int, float)) else None,
             "name": str(name),
             "pid": p.get("pid"),
             "uniqueID": p.get("uniqueID"),
@@ -168,3 +174,51 @@ def condition_mismatches(before, after):
             continue
         out.append("%s was %s before and %s after" % (labels[k], x, y))
     return out
+
+
+def readings_average(readings):
+    """Per-process CPU averaged over READINGS, not rows.
+
+    `readings` is a list of samples, each a dict {process: cpuPercent} for one moment. A process missing from a
+    reading counts as 0 there (the stream leaves out processes under its threshold), so every average divides by
+    the number of readings. Dividing by the number of rows instead would overstate anything that only shows up
+    now and then. Returns {process: average}, rounded to 0.1.
+    """
+    n = len(readings)
+    if n == 0:
+        return {}
+    sums = {}
+    for r in readings:
+        for name, cpu in r.items():
+            sums[name] = sums.get(name, 0.0) + (cpu or 0.0)
+    return {k: round(v / n, 1) for k, v in sums.items()}
+
+
+def measurement_cost_between(first, last, first_at, last_at):
+    """What the measuring cost, from cumulative CPU time between two snapshots: percent of one core per overhead
+    process over the whole window. Unlike the live stream (which leaves out anything under its threshold) this
+    counts every nanosecond. A process that restarted in between contributes only its own new series."""
+    wall = float(last_at) - float(first_at)
+    if wall <= 0:
+        return None
+    before = {identity(p): p["cpuTimeNs"] for p in first if p["overhead"] and p.get("cpuTimeNs") is not None}
+    procs = {}
+    seen = False
+    for p in last:
+        if not p["overhead"] or p.get("cpuTimeNs") is None:
+            continue
+        seen = True
+        b = before.get(identity(p), 0)
+        delta = p["cpuTimeNs"] - b if p["cpuTimeNs"] >= b else p["cpuTimeNs"]
+        procs[p["name"]] = procs.get(p["name"], 0.0) + delta / 1e9 / wall * 100
+    if not seen:
+        return None
+    procs = {k: round(v, 1) for k, v in procs.items()}
+    return {"processes": procs, "totalPercent": round(sum(procs.values()), 1), "seconds": round(wall),
+            "method": "cumulative CPU time between the first and last snapshot"}
+
+
+def measurement_cost(readings):
+    """The measurement's own processes, averaged per reading, and their total (percent of one core)."""
+    avg = readings_average([{k: v for k, v in r.items() if k in OVERHEAD} for r in readings])
+    return {"processes": avg, "totalPercent": round(sum(avg.values()), 1), "readings": len(readings)}

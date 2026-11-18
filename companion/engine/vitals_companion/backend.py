@@ -214,9 +214,28 @@ class Pmd3CliBackend(object):
         snap = self._json("developer", "dvt", "sysmon", "process", "single", timeout=120)
         return snap, time.time()
 
-    def process_stream(self, threshold=1):
-        p = subprocess.Popen([self.exe, "developer", "dvt", "sysmon", "process", "monitor", "threshold", str(threshold)],
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1, env=self._env())
+    def _light_monitor(self, interval, threshold):
+        """The light sampler (lightmon.py), run with the Python that has pymobiledevice3, or None."""
+        py = os.path.join(os.path.dirname(os.path.realpath(self.exe)), "python3")
+        if not os.path.exists(py):
+            py = os.path.join(os.path.dirname(self.exe), "python3")
+        if not os.path.exists(py):
+            return None
+        env = self._env()
+        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        env["PYTHONPATH"] = here + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
+        return [py, "-m", "vitals_companion.lightmon", str(int(interval * 1000)), str(threshold)], env
+
+    def process_stream(self, threshold=1, interval=10.0):
+        """Per-process CPU, one sample every `interval` seconds, four attributes. The plain CLI command samples
+        every 0.5 s with every attribute, which on the Duo cost about a quarter of a core in sysmond alone; it is
+        used only when the light sampler cannot run."""
+        light = self._light_monitor(interval, threshold)
+        if light:
+            cmd, env = light
+        else:
+            cmd, env = [self.exe, "developer", "dvt", "sysmon", "process", "monitor", "threshold", str(threshold)], self._env()
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1, env=env)
         try:
             for line in p.stdout:
                 yield line
@@ -376,16 +395,17 @@ class SimulatedBackend(object):
         procs += [proc("sysmond", 2722, 0, 27.4), proc("DTServiceHub", 2718, 0, 11.0)]
         return procs, self.start + t
 
-    def process_stream(self, threshold=1):
+    def process_stream(self, threshold=1, interval=10.0):
         while True:
             t = self._t()
             procs = [{"name": "mediaanalysisd", "pid": 211, "cpuUsage": 60 + 30 * math.sin(t / 20.0)},
+                     {"name": "sysmond", "pid": 90, "cpuUsage": 2.5},
                      {"name": "SpringBoard", "pid": 34, "cpuUsage": 5 + self.rng.uniform(0, 3)},
                      {"name": "Instagram", "pid": 1402, "cpuUsage": 25 if t > 30 else 2}]
             for p in procs:
                 if p["cpuUsage"] >= threshold:
                     yield json.dumps(p) + "\n"
-            time.sleep(1.0 / self.speed)
+            time.sleep(interval / self.speed)
 
     def syslog_stream(self):
         n = 0

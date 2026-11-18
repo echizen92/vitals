@@ -14,6 +14,24 @@ struct AccessCheck: Decodable {
     var cannotRead: [String]
     var explain: [String]
     var device: [String: String]?
+    /// Every iPhone this Mac can reach now (never the UDID: `ref` is the engine's short hash).
+    var devices: [Phone]?
+    var chosen: String?
+    var chosenMissing: Bool?
+}
+
+/// One reachable iPhone, from `vitals_companion check`.
+struct Phone: Decodable, Identifiable, Hashable {
+    var id: String { ref }
+    let ref: String
+    let model: String?
+    let os: String?
+    let connection: String?
+
+    var modelName: String { model.flatMap { Catalog.modelName(for: $0) } ?? "iPhone" }
+    var connectionName: String { connection == "wifi" ? "Wi-Fi" : "USB" }
+    /// "iPhone Duo · USB"
+    var label: String { "\(modelName) · \(connectionName)" }
 }
 
 struct RateRow: Identifiable, Decodable {
@@ -52,11 +70,26 @@ final class EngineRunner {
     struct Proc: Identifiable { var id: String { name }; let name: String; var cpu: Double; var seen: Date }
 
     // Preferences
-    var pythonOverride: String = UserDefaults.standard.string(forKey: "python") ?? "" {
-        didSet { UserDefaults.standard.set(pythonOverride, forKey: "python") }
+    /// Development only. Never read when the app carries its own runtime (the downloadable build).
+    var pythonOverride: String {
+        get { bundledPython == nil ? (UserDefaults.standard.string(forKey: "python") ?? "") : "" }
+        set { if bundledPython == nil { UserDefaults.standard.set(newValue, forKey: "python") } }
+    }
+
+    /// Contents/Resources/python/bin/python3 in the downloadable build (pinned CPython with pymobiledevice3).
+    var bundledPython: String? {
+        guard let r = Bundle.main.resourceURL?.appendingPathComponent("python/bin/python3"),
+              FileManager.default.isExecutableFile(atPath: r.path) else { return nil }
+        return r.path
     }
     var simulate = UserDefaults.standard.bool(forKey: "simulate") { didSet { UserDefaults.standard.set(simulate, forKey: "simulate"); check() } }
     var wifi = false { didSet { check() } }
+    /// The phone the person picked, remembered between launches. Nil: the engine prefers a USB phone.
+    var chosenPhone: String? = UserDefaults.standard.string(forKey: "phone") {
+        didSet { UserDefaults.standard.set(chosenPhone, forKey: "phone"); if chosenPhone != oldValue { check() } }
+    }
+    /// The phone the current or last task measured, named on the result.
+    var measuredPhone: Phone?
     var saveFolderPath: String = UserDefaults.standard.string(forKey: "saveFolder") ?? "" {
         didSet { UserDefaults.standard.set(saveFolderPath, forKey: "saveFolder") }
     }
@@ -81,6 +114,8 @@ final class EngineRunner {
     var procs: [String: Proc] = [:]
     var warnings: [String] = []
     var rates: [RateRow] = []
+    /// What the measuring itself cost the phone, percent of one core averaged per reading (engine "cost" event).
+    var measurementCost: Double?
     var comparison: [CompareRow] = []
     var verdict: String?
 
@@ -118,7 +153,7 @@ final class EngineRunner {
 
     /// Bundled runtime first (release), then the Settings override, then the development venv, then the system.
     var python: String {
-        if let r = Bundle.main.resourceURL?.appendingPathComponent("python/bin/python3"), FileManager.default.isExecutableFile(atPath: r.path) { return r.path }
+        if let b = bundledPython { return b }
         if !pythonOverride.isEmpty { return pythonOverride }
         let venv = engineDir.appendingPathComponent(".venv/bin/python3")
         if FileManager.default.isExecutableFile(atPath: venv.path) { return venv.path }
@@ -136,21 +171,37 @@ final class EngineRunner {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("Vitals")
     }
 
-    var topProcesses: [Proc] { procs.values.filter { Date().timeIntervalSince($0.seen) < 15 }.sorted { $0.cpu > $1.cpu }.prefix(6).map { $0 } }
+    /// All reachable phones, and the one the engine is using.
+    var phones: [Phone] { access?.devices ?? [] }
+    var currentPhone: Phone? { phones.first { $0.ref == access?.chosen } ?? phones.first }
+
+    var topProcesses: [Proc] { procs.values.filter { Date().timeIntervalSince($0.seen) < 25 }.sorted { $0.cpu > $1.cpu }.prefix(6).map { $0 } }
 
     // MARK: Engine
 
     private func makeProcess(_ args: [String]) -> Process {
         let p = Process()
         p.executableURL = URL(fileURLWithPath: python)
-        p.arguments = ["-m", "vitals_companion"] + (simulate ? ["--simulate"] : []) + (wifi ? ["--wifi"] : []) + args
+        // The engine picks the phone by `--device <ref>`, resolves it to the UDID itself and never prints that.
+        let pick = (!simulate ? chosenPhone : nil).map { ["--device", $0] } ?? []
+        p.arguments = ["-m", "vitals_companion"] + (simulate ? ["--simulate"] : []) + (wifi ? ["--wifi"] : []) + pick + args
         var env = ProcessInfo.processInfo.environment
         env["PYTHONPATH"] = engineDir.path
         env["PYTHONUNBUFFERED"] = "1"
-        // The bundled runtime puts pymobiledevice3 next to python; development installs may live elsewhere.
         let bin = URL(fileURLWithPath: python).deletingLastPathComponent().path
-        env["PATH"] = bin + ":" + (env["PATH"] ?? "") + ":/opt/homebrew/bin:/usr/local/bin:\(NSHomeDirectory())/.local/bin"
-        if env["VITALS_PMD3"] == nil, FileManager.default.isExecutableFile(atPath: bin + "/pymobiledevice3") { env["VITALS_PMD3"] = bin + "/pymobiledevice3" }
+        if bundledPython != nil {
+            // The downloadable build uses nothing outside the app: its own Python and pymobiledevice3, and the
+            // system's /usr/bin (xcrun, for the optional devicectl log pull). No user site-packages.
+            env["PATH"] = bin + ":/usr/bin:/bin:/usr/sbin:/sbin"
+            env["VITALS_PMD3"] = bin + "/pymobiledevice3"
+            env["PYTHONNOUSERSITE"] = "1"
+            env["PYTHONDONTWRITEBYTECODE"] = "1"   // the bundle is signed; bytecode was compiled before signing
+            env.removeValue(forKey: "PYTHONHOME")
+        } else {
+            // Development: pymobiledevice3 next to the chosen python, or on the usual install paths.
+            env["PATH"] = bin + ":" + (env["PATH"] ?? "") + ":/opt/homebrew/bin:/usr/local/bin:\(NSHomeDirectory())/.local/bin"
+            if env["VITALS_PMD3"] == nil, FileManager.default.isExecutableFile(atPath: bin + "/pymobiledevice3") { env["VITALS_PMD3"] = bin + "/pymobiledevice3" }
+        }
         p.environment = env
         return p
     }
@@ -182,7 +233,9 @@ final class EngineRunner {
             if self.access == nil { self.checkProblem = self.lastLine(err) ?? "The check did not finish." }
             // Exit 3: the engine could not start pymobiledevice3. Say that, not "no iPhone found".
             if code == 3 { self.checkProblem = self.access?.explain.first ?? "pymobiledevice3 is missing." }
-            if let d = self.access?.device, self.device.isEmpty { self.device = d }
+            if let d = self.access?.device { self.device = d }
+            // A remembered phone that is not here now: forget it, so the next check uses the preferred one.
+            if self.access?.chosenMissing == true { self.addWarning("The iPhone you chose last time is not connected; using \(self.currentPhone?.label ?? "another iPhone").") }
         }
     }
 
@@ -235,7 +288,7 @@ final class EngineRunner {
         task = .live
         let seconds = minutes * 60
         let out = output("Capture")
-        stream(["capture", "--events", "--seconds", "\(Int(seconds))", "--interval", "3", "--snapshot-every", "120", "--out", out.path]
+        stream(["capture", "--events", "--seconds", "\(Int(seconds))", "--interval", "10", "--snapshot-every", "120", "--out", out.path]
                + (simulate ? ["--speed", "1"] : []))
         begin(.working, length: seconds)
     }
@@ -264,13 +317,14 @@ final class EngineRunner {
     func stop() { process?.terminate() }
 
     private func begin(_ p: Phase, length: TimeInterval?) {
+        if p == .working, !running { measuredPhone = currentPhone }
         phase = p
         phaseStart = .now
         phaseLength = length
     }
 
     private func resetReadings() {
-        temps = []; procs = [:]; warnings = []; rates = []; comparison = []; verdict = nil; lastOutput = nil
+        temps = []; procs = [:]; warnings = []; rates = []; comparison = []; verdict = nil; lastOutput = nil; measurementCost = nil
         actionPrompt = nil; logFileCount = nil; batteryLevel = nil; charging = nil; adapterWatts = nil
         buffer = Data()
     }
@@ -319,6 +373,8 @@ final class EngineRunner {
                 if let w = obj["adapterWatts"] as? Double { adapterWatts = w }
             case "process":
                 if let n = obj["name"] as? String, let c = obj["cpu"] as? Double { procs[n] = Proc(name: n, cpu: c, seen: .now) }
+            case "cost":
+                measurementCost = (obj["totalPercent"] as? Double) ?? (obj["totalPercent"] as? Int).map(Double.init)
             case "warning":
                 if let m = obj["message"] as? String { addWarning(m) }
             case "window":

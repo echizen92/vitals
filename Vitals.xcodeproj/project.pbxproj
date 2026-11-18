@@ -49,6 +49,7 @@
 		9032987B70D7BDD245847674 /* VitalsKit in Frameworks */ = {isa = PBXBuildFile; productRef = 15EA2468A4186EE2E5C60AD9 /* VitalsKit */; };
 		905DDB38A4A6F62F48A37D94 /* VitalsWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F354AF3F2932E2A5DD9A950 /* VitalsWidgetBundle.swift */; };
 		922550638A70DD944D008C6B /* Stages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00FE5AB934A5459966161A8E /* Stages.swift */; };
+		93BE17A203EF501CFDD8F4CE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8225C908E141C9F84DA09E30 /* Assets.xcassets */; };
 		94A8A2F3F5F35B79908159C6 /* PhotoViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67CE67B829D1C1370B485F8A /* PhotoViewer.swift */; };
 		96A538813201C1F6A54B6AF5 /* CaseViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04F18085C9F384A996AD66 /* CaseViews.swift */; };
 		97AFBC29A739755BC215A1F7 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCA3B577569261B54EF3E65 /* ShareViewController.swift */; };
@@ -152,6 +153,7 @@
 		75821D4E359A87FBD028FC4C /* HeatFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatFieldView.swift; sourceTree = "<group>"; };
 		7ADF0F6E4511C58EA89A3629 /* TestsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestsScreen.swift; sourceTree = "<group>"; };
 		7F354AF3F2932E2A5DD9A950 /* VitalsWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VitalsWidgetBundle.swift; sourceTree = "<group>"; };
+		8225C908E141C9F84DA09E30 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8436608EFCB891138D973287 /* vitals_companion */ = {isa = PBXFileReference; lastKnownFileType = folder; name = vitals_companion; path = companion/engine/vitals_companion; sourceTree = SOURCE_ROOT; };
 		86A92848252C75F16967AB97 /* SensorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorTests.swift; sourceTree = "<group>"; };
 		8A04F18085C9F384A996AD66 /* CaseViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseViews.swift; sourceTree = "<group>"; };
@@ -359,6 +361,7 @@
 		97FBC9D3373617FCE4B7BAB7 /* MacApp */ = {
 			isa = PBXGroup;
 			children = (
+				8225C908E141C9F84DA09E30 /* Assets.xcassets */,
 				D14FCAAE252438247C179F84 /* CompanionApp.swift */,
 				8FAB7D6A910A62D6BDC5253A /* ConnectionColumn.swift */,
 				DF83FF901683A3E2F175E2D8 /* EngineRunner.swift */,
@@ -626,6 +629,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93BE17A203EF501CFDD8F4CE /* Assets.xcassets in Resources */,
 				7368EA240A8E1F1D31C955D0 /* vitals_companion in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

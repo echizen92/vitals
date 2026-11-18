@@ -50,6 +50,10 @@ struct ConnectionColumn: View {
                     NotFoundSteps()
                 }
 
+                if runner.phones.count > 1 {
+                    PhonePicker()
+                }
+
                 if runner.connected {
                     VStack(alignment: .leading, spacing: Space.m) {
                         SectionTitle("This Mac can read")
@@ -65,7 +69,9 @@ struct ConnectionColumn: View {
                         Text("Reach iPhone over Wi-Fi").font(.callout)
                     }
                     .toggleStyle(.switch)
-                    .tint(VColor.ink)
+                    // Ink on a dark ground left a white knob on a light track: on and off looked alike.
+                    // The "fine" colour fills the track when on, in both themes.
+                    .tint(VColor.fine)
                     .disabled(runner.running)
                     Text("For when the cable is not working, or after a restart. The iPhone must have trusted this Mac over USB once.")
                         .font(.caption).foregroundStyle(VColor.ink2).fixedSize(horizontal: false, vertical: true)
@@ -84,6 +90,39 @@ struct ConnectionColumn: View {
         }
         .scrollContentBackground(.hidden)
         .background(VColor.ground)
+    }
+}
+
+/// Several iPhones reachable: list them and let the person choose. USB is preferred until they do.
+private struct PhonePicker: View {
+    @Environment(EngineRunner.self) private var runner
+    var body: some View {
+        VStack(alignment: .leading, spacing: Space.s) {
+            SectionTitle("Which iPhone")
+            ForEach(runner.phones) { p in
+                let on = p.ref == runner.currentPhone?.ref
+                Button { runner.chosenPhone = p.ref } label: {
+                    HStack(spacing: Space.m) {
+                        Image(systemName: on ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(on ? VColor.fine : VColor.ink2)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(p.modelName).font(.callout.weight(on ? .semibold : .regular)).foregroundStyle(VColor.ink)
+                            Text([p.connectionName, p.os.map { "iOS \($0)" }].compactMap { $0 }.joined(separator: " · "))
+                                .font(.caption).foregroundStyle(VColor.ink2)
+                        }
+                        Spacer()
+                    }
+                    .padding(.vertical, 4)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .disabled(runner.running || runner.checking)
+                .accessibilityLabel(p.label)
+                .accessibilityAddTraits(on ? .isSelected : [])
+            }
+            Text("Vitals measures the one ticked. A phone on USB is used first unless you choose.")
+                .font(.caption).foregroundStyle(VColor.ink2).fixedSize(horizontal: false, vertical: true)
+        }
     }
 }
 

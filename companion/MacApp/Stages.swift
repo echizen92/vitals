@@ -171,7 +171,7 @@ struct LiveStage: View {
         VStack(alignment: .leading, spacing: Space.xl) {
             switch runner.phase {
             case .ready:
-                StageTitle(title: "Watch it live", subtitle: "Vitals reads the iPhone every few seconds and shows what is busy. Use the iPhone as you normally would, or do the thing that makes it hot.")
+                StageTitle(title: "Watch it live", subtitle: "Vitals reads the iPhone every 10 seconds and shows what is busy. Use the iPhone as you normally would, or do the thing that makes it hot.")
                 Card {
                     VStack(alignment: .leading, spacing: Space.l) {
                         Text("For how long?").font(.headline).foregroundStyle(VColor.ink)
@@ -215,7 +215,7 @@ private struct LiveReadout: View {
             if done {
                 writers
             } else {
-                PhaseProgress(start: runner.phaseStart, length: runner.phaseLength, label: "Reading every 3 seconds")
+                PhaseProgress(start: runner.phaseStart, length: runner.phaseLength, label: "Reading every 10 seconds")
             }
             HStack(alignment: .top, spacing: Space.l) {
                 Card { TemperatureFigure(celsius: runner.latestTemp).frame(maxHeight: .infinity, alignment: .topLeading) }
@@ -269,6 +269,10 @@ private struct LiveReadout: View {
                                  color: p.cpu >= 50 ? VColor.attention : VColor.fine)
                     }
                 }
+                // Watching is not free: say what it cost, so the reader can weigh the numbers above.
+                Text(runner.measurementCost.map { "Measuring cost the iPhone about \(Int($0.rounded()))% of one core, left out above." }
+                     ?? "Vitals reads the iPhone every 10 seconds; its own work is left out of this list.")
+                    .font(.caption).foregroundStyle(VColor.ink2)
             }
         }
     }
@@ -570,6 +574,10 @@ private struct FixResult: View {
 private struct ResultButtons: View {
     @Environment(EngineRunner.self) private var runner
     var body: some View {
+        if let p = runner.measuredPhone {
+            Label("Measured on \(p.label)", systemImage: "iphone")
+                .font(.callout).foregroundStyle(VColor.ink2)
+        }
         HStack(spacing: Space.m) {
             Button { runner.airDrop() } label: { Label("AirDrop to iPhone", systemImage: "square.and.arrow.up") }
                 .vitalsButton(.primary, size: .regular)

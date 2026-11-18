@@ -178,8 +178,8 @@ targets:
         TARGETED_DEVICE_FAMILY: "1"
         SKIP_INSTALL: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
-  # Mac companion (GPL-3.0-or-later, companion/LICENSE). Runs the bundled Python engine; needs pymobiledevice3
-  # installed by the person in a Python 3.9+ environment. Not sandboxed: it launches Python and talks to USB devices.
+  # Mac companion (GPL-3.0-or-later, companion/LICENSE). Runs the Python engine; the downloadable build bundles
+  # Python and pymobiledevice3 (companion/packaging/make-release.sh). Not sandboxed: it launches Python and talks to USB devices.
   VitalsCompanion:
     type: application
     platform: macOS
@@ -203,6 +203,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: sg.com.vitals.companion
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         PRODUCT_NAME: Vitals Companion
         ENABLE_HARDENED_RUNTIME: NO
         CODE_SIGN_IDENTITY: "-"
