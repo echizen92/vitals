@@ -354,7 +354,7 @@ public enum DiagnosisEngine {
         let version = osText.split(separator: " ").last.map(String.init) ?? ""
         if let latest = Catalog.latestOS, !version.isEmpty, compareVersions(version, latest) == .orderedAscending {
             f.append(Finding(id: "software.update", area: .software, severity: .attention,
-                             summary: "iOS \(version) is behind \(latest), the newest Vitals knows of (as of \(Catalog.osTableDate ?? "this app version")).",
+                             summary: "iOS \(version) is behind \(latest), the newest Vitals knows of (as of \(Catalog.osTableDateText ?? "this app version")).",
                              detail: "Vitals does not check online. Your phone may not support the newest version; Settings > General > Software Update says for sure.",
                              evidence: [i.ev("software.os", osText)]))
         }

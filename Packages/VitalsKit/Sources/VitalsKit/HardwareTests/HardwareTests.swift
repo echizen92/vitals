@@ -74,6 +74,9 @@ public enum HardwareTestKind: String, Codable, Sendable, CaseIterable, Identifia
         }
     }
 
+    /// Tests that use the camera or a microphone, where the screen says nothing from them is stored.
+    public var usesCameraOrMicrophone: Bool { self == .cameras || self == .microphones }
+
     /// Tests that only make sense on iPhone Duo.
     public var duoOnly: Bool { self == .duoDisplays || self == .hinge }
 

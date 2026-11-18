@@ -21,6 +21,21 @@ public enum Catalog {
     public static func modelName(for identifier: String) -> String? { models[identifier] }
     public static var latestOS: String? { osTable?.latest }
     public static var osTableDate: String? { osTable?.asOf }
+    /// The table's date for people: day and short month in the reader's locale ("15 Nov", "Nov 15").
+    public static var osTableDateText: String? { osTableDate.flatMap { dayMonth(isoDay: $0) } }
+
+    /// "2026-11-15" -> "15 Nov" (locale-aware). Nil when the text is not a yyyy-MM-dd day.
+    public static func dayMonth(isoDay: String, locale: Locale = .current) -> String? {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(identifier: "UTC")
+        f.dateFormat = "yyyy-MM-dd"
+        guard let d = f.date(from: isoDay) else { return nil }
+        var style = Date.FormatStyle.dateTime.day().month(.abbreviated)
+        style.locale = locale
+        style.timeZone = TimeZone(identifier: "UTC")!
+        return d.formatted(style)
+    }
 
     /// iPhone Duo identifiers. Taken from the Xcode 27.2 simulator profile; confirm on the real phone.
     public static func isDuo(_ identifier: String) -> Bool {

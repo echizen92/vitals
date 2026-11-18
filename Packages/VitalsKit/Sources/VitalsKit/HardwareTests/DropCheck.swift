@@ -14,11 +14,18 @@ public enum DropCheck {
 
     public static func plan(isDuo: Bool) -> [HardwareTestKind] { order.filter { isDuo || !$0.duoOnly } }
 
+    /// Every step the person goes through: the automatic check-up first, then each test. The intro's
+    /// "N checks" and the run's "Step n of N" both use this, so they always agree.
+    public static func stepCount(isDuo: Bool) -> Int { plan(isDuo: isDuo).count + 1 }
+
     public struct Summary: Sendable, Hashable {
         public var failed: [HardwareTestKind] = []
         public var passed: [HardwareTestKind] = []
         /// Skipped or not available on this phone.
         public var notChecked: [HardwareTestKind] = []
+
+        /// The summary's line under the verdict, in the right number.
+        public var failedLine: String { failed.count == 1 ? "This did not pass." : "These did not pass." }
 
         public var verdict: Verdict {
             if !failed.isEmpty { return .damageFound }

@@ -40,7 +40,9 @@ struct TestPage<Content: View>: View {
                     HStack(spacing: Space.m) { outcomeButtons }
                     VStack(alignment: .leading, spacing: Space.m) { outcomeButtons }
                 }
-                Text("Nothing from camera or microphone tests is stored.").font(.caption).foregroundStyle(VColor.ink2)
+                if kind.usesCameraOrMicrophone {
+                    Text("Nothing from camera or microphone tests is stored.").font(.caption).foregroundStyle(VColor.ink2)
+                }
             }
             .padding(Space.l)
             .frame(maxWidth: 720)

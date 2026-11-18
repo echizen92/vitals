@@ -159,3 +159,12 @@ func readings(_ s: FixedSystemSource, at t: Date = t0) async -> [Reading] {
         #expect(r[.heat]?.findings.contains { $0.id == "heat.spells" } == true)
     }
 }
+
+@Suite struct OSTableDateTests {
+    @Test func dateReadsAsDayAndShortMonth() {
+        #expect(Catalog.dayMonth(isoDay: "2026-11-15", locale: Locale(identifier: "en_GB")) == "15 Nov")
+        #expect(Catalog.dayMonth(isoDay: "2026-11-15", locale: Locale(identifier: "en_US")) == "Nov 15")
+        #expect(Catalog.dayMonth(isoDay: "not a date") == nil)
+        #expect(!(Catalog.osTableDateText ?? "").contains("-"), "never the raw ISO date")
+    }
+}

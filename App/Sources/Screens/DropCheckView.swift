@@ -63,7 +63,7 @@ struct DropCheckView: View {
                 Text("One check goes through everything a drop can damage: the screen and touch, cameras, speakers and microphones, buttons, Face ID, sensors and radios. Vitals reads the battery, heat and storage on its own first.")
                     .font(.body).foregroundStyle(VColor.ink2).fixedSize(horizontal: false, vertical: true)
                 VStack(alignment: .leading, spacing: Space.s) {
-                    IntroLine(symbol: "clock", text: "\(plan.count) checks, about 5 minutes")
+                    IntroLine(symbol: "clock", text: "\(DropCheck.stepCount(isDuo: model.isDuo)) checks, about 5 minutes")
                     IntroLine(symbol: "forward", text: "Each one tells you what to do; skip any you like")
                     IntroLine(symbol: "lock", text: "Nothing from the camera or microphone is kept")
                 }
@@ -125,7 +125,7 @@ struct DropCheckView: View {
 
     /// "Step 3 of 16 · Cameras" with a bar. Step 0 is the automatic check-up.
     private func progress(step: Int, title: String) -> some View {
-        let total = plan.count + 1
+        let total = DropCheck.stepCount(isDuo: model.isDuo)
         return VStack(alignment: .leading, spacing: Space.xs) {
             HStack {
                 Text("Step \(step + 1) of \(total)").font(.caption.weight(.semibold)).foregroundStyle(VColor.ink2).monospacedDigit()
@@ -187,7 +187,7 @@ struct DropCheckView: View {
         let (status, title, line): (Status, String, String) = switch s.verdict {
         case .damageFound:
             (.problem, "\(s.failed.count) \(s.failed.count == 1 ? "part needs" : "parts need") a look",
-             "These did not pass after the drop.")
+             s.failedLine)
         case .allPassed:
             (.good, "No damage found", "Every check passed. Vitals cannot see inside the phone, so watch for heat, swelling or new faults.")
         case .passedWithGaps:

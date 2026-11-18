@@ -79,6 +79,23 @@ import Testing
         #expect(s.verdict == .damageFound)
     }
 
+    @Test func introAndStepsCountTheSameSteps() {
+        // The check-up is a step too: 15 tests + 1 on a regular iPhone, 17 + 1 on the Duo.
+        #expect(DropCheck.stepCount(isDuo: false) == DropCheck.plan(isDuo: false).count + 1)
+        #expect(DropCheck.stepCount(isDuo: true) == HardwareTestKind.allCases.count + 1)
+        #expect(DropCheck.stepCount(isDuo: false) == 16)
+        #expect(DropCheck.stepCount(isDuo: true) == 18)
+    }
+
+    @Test func failedLineFollowsTheCount() {
+        #expect(DropCheck.Summary(failed: [.touch]).failedLine == "This did not pass.")
+        #expect(DropCheck.Summary(failed: [.touch, .cameras]).failedLine == "These did not pass.")
+    }
+
+    @Test func privacyLineOnlyForCameraAndMicrophone() {
+        #expect(HardwareTestKind.allCases.filter(\.usesCameraOrMicrophone) == [.microphones, .cameras])
+    }
+
     @Test func verdicts() {
         #expect(DropCheck.Summary(passed: [.display]).verdict == .allPassed)
         #expect(DropCheck.Summary(passed: [.display], notChecked: [.nfc]).verdict == .passedWithGaps)
